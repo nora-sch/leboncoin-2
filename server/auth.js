@@ -1,11 +1,15 @@
 const argon2 = require("argon2");
+const dbConnection = require("./database/connection");
 const jwt = require("jsonwebtoken");
+const findByEmailWithPwd =
+  "SELECT id, first_name, last_name, email, password, is_admin, avatar FROM users where email = ?";
 const hashingOptions = {
   type: argon2.argon2id,
   memoryCost: 2 ** 16,
   timeCost: 5,
   parallelism: 1,
 };
+
 const hashPassword = async (req, res, next) => {
   const pwd = req.body.password;
   // hash the password using argon2 then call next()
@@ -23,17 +27,12 @@ const hashPassword = async (req, res, next) => {
     });
 };
 
-const verifyPassword = (req, res) => {
+const verifyPassword = (req, res, next) => {
   argon2
     .verify(req.user.password, req.body.password)
     .then((isVerified) => {
       if (isVerified) {
-        const payload = { sub: req.user.id };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {
-          expiresIn: "1h",
-        });
-        delete req.user.password;
-        res.send({ token, user: req.user });
+        next();
       } else {
         res.sendStatus(401);
       }
@@ -46,24 +45,42 @@ const verifyPassword = (req, res) => {
 
 const verifyToken = (req, res, next) => {
   try {
-    const authorizationHeader = req.get("Authorization");
-    if (authorizationHeader == null) {
-      throw new Error("Authorization header is missing");
-    }
-    const [type, token] = authorizationHeader.split(" ");
-    if (type !== "Bearer") {
-      throw new Error("Authorization header has not the 'Bearer' type");
-    }
-    const decodedToken = jwt.decode(token, { complete: true });
-    req.tokenUserId = decodedToken.payload.sub;
+    console.log(req.cookies.userCookie);
+    jwt.verify(req.cookies.userCookie, process.env.JWT_SECRET);
+    const decodedTokenObject = jwt.decode(req.cookies.userCookie, {
+      complete: true,
+    });
+    req.tokenUserId = decodedTokenObject.payload.sub;
     next();
   } catch (err) {
     console.error(err);
     res.sendStatus(401);
   }
 };
+const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
+  // {
+  //   "email": "norah@inbox.lv",
+  //   "password" :"Pa$$w0rd!"
+  //  } FOR POSTMAN
+  dbConnection
+    .query(findByEmailWithPwd, [req.body.email])
+    .then(([users]) => {
+      if (users[0] != null) {
+        req.user = users[0];
+      } else {
+        res.status(404).send("Not Found");
+      }
+      next();
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
+
 module.exports = {
   hashPassword,
   verifyPassword,
   verifyToken,
+  getUserByEmailWithPasswordAndPassToNext,
 };

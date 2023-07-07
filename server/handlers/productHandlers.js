@@ -6,6 +6,9 @@ const getAll =
   "SELECT p.*, pi.link FROM products p INNER JOIN product_images pi ON pi.product_id=p.id";
 const findById =
   "SELECT p.*, pi.link FROM products p INNER JOIN product_images pi ON pi.product_id=p.id where p.id = ?";
+
+const deleteOne = "DELETE from products WHERE id = ?";
+
 const postProduct = (req, res) => {
   //   {
   //     "name": "SAMSUNG X-6",
@@ -55,23 +58,41 @@ const getAllProducts = (req, res) => {
 };
 
 const getProductById = (req, res) => {
-    dbConnection
-      .query(findById, [parseInt(req.params.id)])
-      .then(([products]) => {
-        if (products[0] != null) {
-          res.json(products[0]);
-        } else {
-          res.status(404).send("Not Found");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send("Error retrieving data from database");
-      });
-  };
+  dbConnection
+    .query(findById, [parseInt(req.params.id)])
+    .then(([products]) => {
+      if (products[0] != null) {
+        res.json(products[0]);
+      } else {
+        res.status(404).send("Not Found");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
+
+const deleteProduct = (req, res) => {
+  const id = parseInt(req.params.id);
+  dbConnection
+    .query(deleteOne, [id])
+    .then(([result]) => {
+      if (result.affectedRows === 0) {
+        res.status(404).send("Not Found");
+      } else {
+        res.status(202).json({ message: `Product deleted` });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
 
 module.exports = {
   postProduct,
   getAllProducts,
-  getProductById
+  getProductById,
+  deleteProduct,
 };

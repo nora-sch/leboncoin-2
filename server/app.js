@@ -3,11 +3,13 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT;
 app.use(express.json()); 
+var cookieParser = require('cookie-parser')
+app.use(cookieParser())
 
 const productHandlers = require("./handlers/productHandlers");
 const userHandlers = require("./handlers/userHandlers");
 const commentHandlers = require("./handlers/commentHandlers");
-const { verifyPassword, verifyToken, hashPassword } = require("./auth");
+const { verifyPassword, verifyToken, hashPassword, getUserByEmailWithPasswordAndPassToNext } = require("./auth");
 
 //routes publiques
 // app.get("/", (req, res) => {
@@ -16,13 +18,15 @@ const { verifyPassword, verifyToken, hashPassword } = require("./auth");
 // app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products/:id", productHandlers.getProductById);
-app.post("/api/login", userHandlers.getUserByEmailWithPasswordAndPassToNext, verifyPassword);
+app.post("/api/login", getUserByEmailWithPasswordAndPassToNext, verifyPassword, userHandlers.signin);
 app.post("/api/users", hashPassword, userHandlers.postUser);
 
 
 //routes privées
 app.use(verifyToken); // verifyToken sera utilisé pour tt les routes qui suivent cette ligne
 app.post("/api/products", productHandlers.postProduct);
+app.delete("/api/products/:id", productHandlers.deleteProduct);
+app.get('/api/logout', userHandlers.logout);
 // app.post("/api/products/:id/comments", commentHandlers.postComment);
 // app.put("/api/products/:id/comments/:id", commentHandlers.updateComment);
 // app.delete("/api/products/:id/comments/:id", commentHandlers.deleteComment);
