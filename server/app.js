@@ -15,7 +15,7 @@ const { verifyPassword, verifyToken, hashPassword } = require("./auth");
 //   });
 // app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products", productHandlers.getAllProducts);
-// app.get("/api/products/:id", movieHandlers.getMovieById);
+app.get("/api/products/:id", productHandlers.getProductById);
 app.post("/api/login", userHandlers.getUserByEmailWithPasswordAndPassToNext, verifyPassword);
 app.post("/api/users", hashPassword, userHandlers.postUser);
 
