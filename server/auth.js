@@ -45,8 +45,8 @@ const verifyPassword = (req, res, next) => {
 
 const verifyToken = (req, res, next) => {
   try {
-    console.log(req.cookies.userCookie);
-    jwt.verify(req.cookies.userCookie, process.env.JWT_SECRET);
+    // console.log(req.cookies.userCookie);
+    // var decoded = jwt.verify(req.cookies.userCookie, process.env.JWT_SECRET);
     const decodedTokenObject = jwt.decode(req.cookies.userCookie, {
       complete: true,
     });
