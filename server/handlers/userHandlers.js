@@ -30,11 +30,31 @@ const postUser = (req, res) => {
       });
   };
 
+  const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
+    // {
+    //   "email": "norah@inbox.lv",
+    //   "password" :"Pa$$w0rd!"
+    //  } FOR POSTMAN
+    dbConnection
+      .query(findByEmailWithPwd, [req.body.email])
+      .then(([users]) => {
+        if (users[0] != null) {
+          req.user = users[0];
+        } else {
+          res.status(404).send("Not Found");
+        }
+        next();
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error retrieving data from database");
+      });
+  };
   module.exports = {
     //getUsers,
     postUser,
     // getUserById,
     //modifyUser,
-    // getUserByEmailWithPasswordAndPassToNext,
+    getUserByEmailWithPasswordAndPassToNext,
     //deleteUser
   };

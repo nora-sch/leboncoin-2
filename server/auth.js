@@ -25,14 +25,14 @@ const hashPassword = async (req, res, next) => {
 
 const verifyPassword = (req, res) => {
   argon2
-    .verify(req.user.hashedPassword, req.body.password)
+    .verify(req.user.password, req.body.password)
     .then((isVerified) => {
       if (isVerified) {
         const payload = { sub: req.user.id };
         const token = jwt.sign(payload, process.env.JWT_SECRET, {
           expiresIn: "1h",
         });
-        delete req.user.hashedPassword;
+        delete req.user.password;
         res.send({ token, user: req.user });
       } else {
         res.sendStatus(401);

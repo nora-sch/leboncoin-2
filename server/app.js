@@ -15,8 +15,8 @@ app.get("/", (req, res) => {
   });
 // app.get("/api/products", productHandlers.getAllProducts);
 // app.get("/api/products/:id", movieHandlers.getMovieById);
-// app.post("/api/login", userHandlers.getUserByEmailWithPasswordAndPassToNext, verifyPassword);
- app.post("/api/users", hashPassword, userHandlers.postUser);
+app.post("/api/login", userHandlers.getUserByEmailWithPasswordAndPassToNext, verifyPassword);
+app.post("/api/users", hashPassword, userHandlers.postUser);
 
 
 //routes privées
