@@ -2,7 +2,20 @@ const dbConnection = require("../database/connection");
 const jwt = require("jsonwebtoken");
 const postOne =
   "INSERT INTO users (first_name, last_name, email, password, is_admin, avatar, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+const getAll =
+  "SELECT id, first_name, last_name, email, is_admin, avatar, created_at, updated_at FROM users";
 
+const getAllUsers = (req, res) => {
+  dbConnection
+    .query(getAll)
+    .then(([users]) => {
+      res.json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
 const postUser = (req, res) => {
   const { firstname, lastname, email, hashedPassword, avatar } = req.body;
   dbConnection
@@ -29,7 +42,6 @@ const postUser = (req, res) => {
     });
 };
 
-
 const logout = (req, res) => {
   return res
     .clearCookie("userCookie")
@@ -42,14 +54,14 @@ const signin = (req, res) => {
     expiresIn: "1h",
   });
   delete req.user.password;
-  res.cookie('userCookie', token).status(200).json({user: req.user})
+  res.cookie("userCookie", token).status(200).json({ user: req.user });
 };
 module.exports = {
-  //getUsers,
+  getAllUsers,
   postUser,
   // getUserById,
   //modifyUser,
   //deleteUser
   logout,
-  signin
+  signin,
 };

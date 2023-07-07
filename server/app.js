@@ -9,13 +9,15 @@ app.use(cookieParser());
 const productHandlers = require("./handlers/productHandlers");
 const userHandlers = require("./handlers/userHandlers");
 const commentHandlers = require("./handlers/commentHandlers");
+const faker = require("./faker/faker");
 const {
   verifyPassword,
   verifyToken,
   hashPassword,
   getUserByEmailWithPasswordAndPassToNext,
 } = require("./auth");
-
+//faker
+app.get("/faker", faker.hydrate);
 //routes publiques
 // app.get("/", (req, res) => {
 //     res.send("LEBONCOIN");
@@ -42,7 +44,7 @@ app.delete("/api/products/:id/comments/:id", commentHandlers.deleteComment);
 app.delete("/api/products/:id/images/:id", productHandlers.deleteOneImage);
 // //admin
 app.get("/api/products/:id/comments", commentHandlers.getAllByProduct);
-// app.get("/api/users", userHandlers.getUsers);
+app.get("/api/users", userHandlers.getAllUsers);
 // app.get("/api/users/:id", userHandlers.getUserById);
 // app.put("/api/users/:id", hashPassword, userHandlers.modifyUser);
 // app.delete("/api/users/:id", userHandlers.deleteUser);
