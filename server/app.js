@@ -39,7 +39,7 @@ app.post("/api/products/:id", commentHandlers.postComment);
 app.get("/api/logout", userHandlers.logout);
 // app.put("/api/products/:id/comments/:id", commentHandlers.updateComment);
 app.delete("/api/products/:id/comments/:id", commentHandlers.deleteComment);
-
+app.delete("/api/products/:id/images/:id", productHandlers.deleteOneImage);
 // //admin
 app.get("/api/products/:id/comments", commentHandlers.getAllByProduct);
 // app.get("/api/users", userHandlers.getUsers);
