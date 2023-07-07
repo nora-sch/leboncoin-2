@@ -10,10 +10,11 @@ const commentHandlers = require("./handlers/commentHandlers");
 const { verifyPassword, verifyToken, hashPassword } = require("./auth");
 
 //routes publiques
-app.get("/", (req, res) => {
-    res.send("LEBONCOIN");
-  });
+// app.get("/", (req, res) => {
+//     res.send("LEBONCOIN");
+//   });
 // app.get("/api/products", productHandlers.getAllProducts);
+app.get("/api/products", productHandlers.getAllProducts);
 // app.get("/api/products/:id", movieHandlers.getMovieById);
 app.post("/api/login", userHandlers.getUserByEmailWithPasswordAndPassToNext, verifyPassword);
 app.post("/api/users", hashPassword, userHandlers.postUser);
