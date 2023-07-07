@@ -20,8 +20,8 @@ app.post("/api/users", hashPassword, userHandlers.postUser);
 
 
 //routes privées
-// app.use(verifyToken); // verifyToken sera utilisé pour tt les routes qui suivent cette ligne
-// app.post("/api/products", productHandlers.postProduct);
+app.use(verifyToken); // verifyToken sera utilisé pour tt les routes qui suivent cette ligne
+app.post("/api/products", productHandlers.postProduct);
 // app.post("/api/products/:id/comments", commentHandlers.postComment);
 // app.put("/api/products/:id/comments/:id", commentHandlers.updateComment);
 // app.delete("/api/products/:id/comments/:id", commentHandlers.deleteComment);
