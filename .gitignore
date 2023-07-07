@@ -1,0 +1,6 @@
+
+### REACT ###
+/client/node_modules
+### EXPRESS ###
+/server/node_modules
+/server/.env
