@@ -5,9 +5,11 @@ const addImage = "INSERT INTO product_images (product_id, link) VALUES (?,?)";
 const getAll =
   "SELECT p.*, pi.link FROM products p INNER JOIN product_images pi ON pi.product_id=p.id";
 const findById =
-  "SELECT p.*, pi.link FROM products p INNER JOIN product_images pi ON pi.product_id=p.id where p.id = ?";
+  "SELECT p.*, pi.link FROM products p INNER JOIN product_images pi ON pi.product_id=p.id WHERE p.id = ?";
 
 const deleteOne = "DELETE from products WHERE id = ?";
+const getCommentsByProduct =
+  "SELECT c.message, c.created_at, u.id as user_id, u.first_name, u.avatar FROM users u INNER JOIN comments c ON c.user_id=u.id WHERE c.product_id = ?";
 
 const postProduct = (req, res) => {
   //   {
@@ -62,7 +64,21 @@ const getProductById = (req, res) => {
     .query(findById, [parseInt(req.params.id)])
     .then(([products]) => {
       if (products[0] != null) {
-        res.json(products[0]);
+        const product = products[0];
+        let productComments={};
+        dbConnection
+        .query(getCommentsByProduct, [parseInt(req.params.id)])
+        .then(([comments]) => {
+          if (comments[0] != null) {
+            productComments = comments;
+          }
+          res.json({product, productComments});
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).send("Error retrieving data from database");
+        });
+       
       } else {
         res.status(404).send("Not Found");
       }

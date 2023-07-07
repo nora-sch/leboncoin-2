@@ -20,15 +20,16 @@ app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products/:id", productHandlers.getProductById);
 app.post("/api/login", getUserByEmailWithPasswordAndPassToNext, verifyPassword, userHandlers.signin);
 app.post("/api/users", hashPassword, userHandlers.postUser);
-app.get("/api/products/:id/comments", commentHandlers.getAllByProduct);
+
 
 
 //routes privées
 app.use(verifyToken); // verifyToken sera utilisé pour tt les routes qui suivent cette ligne
 app.post("/api/products", productHandlers.postProduct);
 app.delete("/api/products/:id", productHandlers.deleteProduct);
+app.post("/api/products/:id", commentHandlers.postComment);
 app.get("/api/logout", userHandlers.logout);
-app.post("/api/products/:id/comments", commentHandlers.postComment);
+// app.get("/api/products/:id/comments", commentHandlers.getAllByProduct);
 // app.put("/api/products/:id/comments/:id", commentHandlers.updateComment);
 // app.delete("/api/products/:id/comments/:id", commentHandlers.deleteComment);
 
