@@ -45,17 +45,19 @@ function Home() {
     <div>
       <Container
         maxWidth="xl"
-        style={{ backgroundColor: "black",  marginTop:'1rem'}}
-        justifyContent="center"
-       
+        style={{
+          // backgroundColor: "black",
+          marginTop: "1rem",
+          justifyContent: "center",
+        }}
       >
         <Grid
           container
           spacing={2}
           style={{
-            backgroundColor: "red",
+            // backgroundColor: "red",
+            justifyContent: "center",
           }}
-          justifyContent="center"
         >
           {products &&
             products.length > 0 &&

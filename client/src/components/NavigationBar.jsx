@@ -10,13 +10,13 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
+
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link } from "react-router-dom";
 
 // const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-function NavigationBar({setModalOpen}) {
+function NavigationBar({ setModalOpen }) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -34,16 +34,15 @@ function NavigationBar({setModalOpen}) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  const openSignInModal = () =>{
+  const openSignInModal = () => {
     setAnchorElUser(null);
     setModalOpen(true);
-  }
+  };
 
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
@@ -54,12 +53,12 @@ function NavigationBar({setModalOpen}) {
               display: { xs: "none", md: "flex" },
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
+              // letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
             }}
           >
-            LOGO
+               LeBonCoin
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -99,8 +98,7 @@ function NavigationBar({setModalOpen}) {
               </MenuItem>
             </MenuList>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
+                  <Typography
             variant="h5"
             noWrap
             component="a"
@@ -116,7 +114,7 @@ function NavigationBar({setModalOpen}) {
               textDecoration: "none",
             }}
           >
-            LOGO
+            LeBonCoin
           </Typography>
           <Box
             style={{
@@ -134,8 +132,11 @@ function NavigationBar({setModalOpen}) {
                   onClick={handleCloseNavMenu}
                   sx={{ my: 2, color: "white", display: "block" }}
                 >
-                  <Link  to="/" style={{ color: "white", textDecoration:'none'}}>
-                    Home
+                  <Link
+                    to="/"
+                    style={{ color: "white", textDecoration: "none" }}
+                  >
+                    HOME
                   </Link>
                 </Button>
               </Box>
@@ -177,9 +178,21 @@ function NavigationBar({setModalOpen}) {
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))} */}
-                  <MenuItem key='Sign In' onClick={()=>{openSignInModal()}}>
-                    <Typography textAlign="center" onClick={()=>{setModalOpen(true)}}>Sign In</Typography>
-                  </MenuItem>
+                <MenuItem
+                  key="Sign In"
+                  onClick={() => {
+                    openSignInModal();
+                  }}
+                >
+                  <Typography
+                    textAlign="center"
+                    onClick={() => {
+                      setModalOpen(true);
+                    }}
+                  >
+                    Sign In
+                  </Typography>
+                </MenuItem>
               </MenuList>
             </Box>
           </Box>
