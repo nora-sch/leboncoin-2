@@ -6,7 +6,6 @@ app.use(express.json());
 var cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
-
 const productHandlers = require("./handlers/productHandlers");
 const userHandlers = require("./handlers/userHandlers");
 const commentHandlers = require("./handlers/commentHandlers");

@@ -48,13 +48,15 @@ const logout = (req, res) => {
     .status(200)
     .json({ message: "Successfully logged out :smirk: :four_leaf_clover:" });
 };
+
+
 const signin = (req, res) => {
   const payload = { sub: req.user.id };
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
   delete req.user.password;
-  res.cookie("userCookie", token).status(200).json({ user: req.user });
+  res.cookie("userCookie", token).status(200).json({ user: req.user, message: `Hello, ${req.user.first_name}`});
 };
 module.exports = {
   getAllUsers,

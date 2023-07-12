@@ -28,12 +28,17 @@ const hashPassword = async (req, res, next) => {
 };
 
 const verifyPassword = (req, res, next) => {
+  console.log(req.user.password);
+  console.log('body')
+  console.log(req.body.password)
   argon2
     .verify(req.user.password, req.body.password)
     .then((isVerified) => {
+      console.log(isVerified)
       if (isVerified) {
         next();
       } else {
+
         res.sendStatus(401);
       }
     })

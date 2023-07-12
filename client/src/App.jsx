@@ -6,13 +6,14 @@ import NavigationBar from "./components/NavigationBar";
 import "./App.css";
 import ConnectionModal from "./components/ConnectionModal";
 import { useState } from "react";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   // Modal
   const [open, setOpen] = useState(false);
   return (
     <BrowserRouter>
-      {/* <ToastContainer /> */}
+      <ToastContainer />
       <NavigationBar setModalOpen={setOpen} />
       <Main>
         {/* <SideBar /> */}
@@ -30,7 +31,7 @@ function App() {
           {/* <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} /> */}
         </Routes>
-        <ConnectionModal open = {open} setModalOpen={setOpen} />
+        <ConnectionModal open={open} setModalOpen={setOpen} />
       </Main>
     </BrowserRouter>
   );
