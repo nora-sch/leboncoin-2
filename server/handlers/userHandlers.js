@@ -1,7 +1,7 @@
 const dbConnection = require("../database/connection");
 const jwt = require("jsonwebtoken");
 const postOne =
-  "INSERT INTO users (first_name, last_name, email, password, is_admin, avatar, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+  "INSERT INTO users (first_name, last_name, email, password, is_admin, avatar, created_at, updated_at, validation_token, is_validated) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 const getAll =
   "SELECT id, first_name, last_name, email, is_admin, avatar, created_at, updated_at FROM users";
 
@@ -28,6 +28,8 @@ const postUser = (req, res) => {
       avatar,
       new Date(),
       new Date(),
+      'ADD CRYPTED TOKEN',
+      false
     ])
     .then(([result]) => {
       if (result.insertId != null) {

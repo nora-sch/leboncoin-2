@@ -5,7 +5,7 @@ const postOneUser =
   "INSERT INTO users (first_name, last_name, email, password, is_admin, avatar, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 
 const postOneProduct =
-  "INSERT INTO products (name, description, price, created_at, updated_at, user_id) VALUES(?, ?, ?, ?, ?, ?)";
+  "INSERT INTO products (name, description, price, created_at, updated_at, user_id, validation_token, is_validated) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 const addImage = "INSERT INTO product_images (product_id, link) VALUES (?,?)";
 const postOneComment =
   "INSERT INTO comments (message, created_at, updated_at, user_id, product_id) VALUES(?, ?, ?, ?, ?)";
@@ -37,6 +37,8 @@ const hydrate = (req, res) => {
           faker.internet.avatar(),
           new Date(),
           new Date(),
+          'ADD CRYPTED TOKEN',
+          false
         ])
         .then(([result]) => {
           if (result.insertId != null) {

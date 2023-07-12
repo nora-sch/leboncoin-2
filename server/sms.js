@@ -10,7 +10,6 @@ client.messages
      to: '+37126339023'
    })
   .then(message => console.log(`${message.sid} - sent :${message.date_created}`));
-
   
 //   {
 //     "account_sid": "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
