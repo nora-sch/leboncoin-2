@@ -5,6 +5,8 @@ import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { toast } from "react-toastify";
+import { useSelector, useDispatch } from "react-redux";
+import { add } from "../features/signInSlice";
 import {
   Divider,
   FormControl,
@@ -58,9 +60,8 @@ function ConnectionModal({ open, setModalOpen }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [avatar, setAvatar] = useState("");
-  const [isSignedIn, setIsSignedIn] = useState(false);
   const [signInModal, setSignInModal] = useState(true);
-
+  const dispatch = useDispatch();
   const handleOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
 
@@ -84,7 +85,7 @@ function ConnectionModal({ open, setModalOpen }) {
         console.log(result);
 
         notify(result[0].message, "success");
-        setIsSignedIn(true);
+        dispatch(add(result[0].user));
         setModalOpen(false);
         // dispatch(add(user.user));
       } else {
@@ -102,56 +103,56 @@ function ConnectionModal({ open, setModalOpen }) {
     // // console.log(formData);
     // // https://api.cloudinary.com/v1_1/:cloud_name/:action
     const signUp = () => {
-    //   fetch("https://api.cloudinary.com/v1_1/cloudinarynora/image/upload", {
-    //     method: "POST",
-    //     body: formData,
-    //   })
-    //     .then((response) => {
-    //       if (response.ok) {
-    //         return response.json();
-    //       }
-    //     })
-    //     .then((data) => {
-    fetch("/api/signup", {
-      method: "POST",
-      body: JSON.stringify({
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-        avatar:null
-        //  avatar: data.url,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        // "token":
-      },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          return response.json();
-        } else {
-          notify(`Server error ${response.status}`, "error");
-        }
+      //   fetch("https://api.cloudinary.com/v1_1/cloudinarynora/image/upload", {
+      //     method: "POST",
+      //     body: formData,
+      //   })
+      //     .then((response) => {
+      //       if (response.ok) {
+      //         return response.json();
+      //       }
+      //     })
+      //     .then((data) => {
+      fetch("/api/signup", {
+        method: "POST",
+        body: JSON.stringify({
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password,
+          avatar: null,
+          //  avatar: data.url,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          // "token":
+        },
       })
-      .then((data) => {
-        console.log(data);
-        // if (data.status === 201) {
-          // setIsSignedUp(true);
+        .then((response) => {
+          console.log(response);
+          if (response.ok) {
+            return response.json();
+          } else {
+            notify(`Server error ${response.status}`, "error");
+          }
+        })
+        .then((data) => {
+          console.log(data);
+          // if (data.status === 201) {
+
           // console.log('couc')
           setModalOpen(false);
           notify(data.message, "success");
-        // } else if (data.status === 400) {
-        //   notify(data.message, "error");
-        // } else {
-        //   notify(data.error, "error");
-        // }
-      });
+
+          // } else if (data.status === 400) {
+          //   notify(data.message, "error");
+          // } else {
+          //   notify(data.error, "error");
+          // }
+        });
     };
     // });
     signUp();
-
   };
   return (
     <div>

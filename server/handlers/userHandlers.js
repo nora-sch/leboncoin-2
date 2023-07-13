@@ -59,7 +59,7 @@ const logout = (req, res) => {
   return res
     .clearCookie("userCookie")
     .status(200)
-    .json({ message: "Successfully logged out :smirk: :four_leaf_clover:" });
+    .json({ message: "Successfully logged out" });
 };
 
 const signin = (req, res) => {

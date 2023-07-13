@@ -12,14 +12,37 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 
 import MenuIcon from "@mui/icons-material/Menu";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { remove } from "../features/signInSlice";
 
-// const settings = ["Profile", "Account", "Dashboard", "Logout"];
-
+const notify = (msg, type) => {
+  switch (type) {
+    case "success":
+      toast.success(msg, {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        theme: "colored",
+        className: "toast-success",
+      });
+      break;
+    case "error":
+      toast.error(msg, {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+        theme: "colored",
+        className: "toast-error",
+      });
+      break;
+  }
+};
 function NavigationBar({ setModalOpen }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+  const user = useSelector((state) => state.user.user);
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -37,6 +60,24 @@ function NavigationBar({ setModalOpen }) {
   const openSignInModal = () => {
     setAnchorElUser(null);
     setModalOpen(true);
+  };
+  const logOut = () => {
+    const removeToken = async () => {
+      const sendLogin = await fetch("/api/logout", {
+        method: "GET",
+      });
+      if (sendLogin.status === 200) {
+        const result = await sendLogin.json();
+        console.log(result);
+        notify(result.message, "success");
+      } else {
+        const error = await sendLogin.json();
+        notify(error[0].error, "error"); // TODO
+      }
+    };
+    removeToken();
+    navigate("/");
+    dispatch(remove());
   };
 
   return (
@@ -58,7 +99,7 @@ function NavigationBar({ setModalOpen }) {
               textDecoration: "none",
             }}
           >
-               LeBonCoin
+            LeBonCoin
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -98,7 +139,7 @@ function NavigationBar({ setModalOpen }) {
               </MenuItem>
             </MenuList>
           </Box>
-                  <Typography
+          <Typography
             variant="h5"
             noWrap
             component="a"
@@ -152,6 +193,7 @@ function NavigationBar({ setModalOpen }) {
             </Box>
 
             <Box sx={{ flexGrow: 0 }}>
+              {user && <div>{user.first_name}</div>}
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="user avatar" src="" />
@@ -173,26 +215,39 @@ function NavigationBar({ setModalOpen }) {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {/* {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-                ))} */}
-                <MenuItem
-                  key="Sign In"
-                  onClick={() => {
-                    openSignInModal();
-                  }}
-                >
-                  <Typography
-                    textAlign="center"
+                {user ? (
+                  <MenuItem
+                    key="Sign Out"
                     onClick={() => {
-                      setModalOpen(true);
+                      // openSignInModal();
                     }}
                   >
-                    Sign In
-                  </Typography>
-                </MenuItem>
+                    <Typography
+                      textAlign="center"
+                      onClick={() => {
+                        logOut();
+                      }}
+                    >
+                      Sign Out
+                    </Typography>
+                  </MenuItem>
+                ) : (
+                  <MenuItem
+                    key="Sign In"
+                    onClick={() => {
+                      openSignInModal();
+                    }}
+                  >
+                    <Typography
+                      textAlign="center"
+                      onClick={() => {
+                        setModalOpen(true);
+                      }}
+                    >
+                      Sign In
+                    </Typography>
+                  </MenuItem>
+                )}
               </MenuList>
             </Box>
           </Box>
