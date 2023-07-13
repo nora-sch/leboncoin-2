@@ -25,13 +25,15 @@ app.get("/faker", faker.hydrate);
 // app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products/:id", productHandlers.getProductById);
+app.post("/api/users", hashPassword, userHandlers.postUser);
+app.get("/api/validate/:token", userHandlers.validateUserAndRedirect);
+//if is validated
 app.post(
   "/api/login",
   getUserByEmailWithPasswordAndPassToNext,
   verifyPassword,
   userHandlers.signin
 );
-app.post("/api/users", hashPassword, userHandlers.postUser);
 
 //routes privées
 app.use(verifyToken); // verifyToken sera utilisé pour tt les routes qui suivent cette ligne
