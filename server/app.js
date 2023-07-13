@@ -25,7 +25,8 @@ app.get("/faker", faker.hydrate);
 // app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products/:id", productHandlers.getProductById);
-app.post("/api/users", hashPassword, userHandlers.postUser);
+// app.post("/api/users", hashPassword, userHandlers.postUser);
+app.post("/api/signup", hashPassword, userHandlers.postUser);
 app.get("/api/validate/:token", userHandlers.validateUserAndRedirect);
 //if is validated
 app.post(

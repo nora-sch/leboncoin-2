@@ -25,13 +25,13 @@ const getAllUsers = (req, res) => {
 const postUser = (req, res) => {
   const validationToken = uid(100);
   const host = "http://localhost:3000/validate/";
-  const { firstname, lastname, email, hashedPassword, avatar } = req.body;
-  const emailHtml = `<h1>Hello ${firstname}!</h><p>Click below to validate you email!</p> <p>${host}${validationToken} </p>`;
+  const { firstName, lastName, email, hashedPassword, avatar } = req.body;
+  const emailHtml = `<h1>Hello ${firstName}!</h><p>Click below to validate you email!</p> <p>${host}${validationToken} </p>`;
 
   dbConnection
     .query(postOne, [
-      firstname,
-      lastname,
+      firstName,
+      lastName,
       email,
       hashedPassword,
       false,
@@ -44,9 +44,9 @@ const postUser = (req, res) => {
     .then(([result]) => {
       if (result.insertId != null) {
         communication.sendMail(emailHtml).catch((e) => console.log(e));
-        res.location(`/${result.insertId}`).sendStatus(201);
+        res.status(201).json({message:"You have been signed up - check your email and click on the link to validate your account!"});
       } else {
-        res.status(404).send("Not Found");
+        res.status(404).json({error:"Not Found"});
       }
     })
     .catch((err) => {
@@ -63,7 +63,8 @@ const logout = (req, res) => {
 };
 
 const signin = (req, res) => {
-  const payload = { sub: req.user.id };
+  // try{
+      const payload = { sub: req.user.id };
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
@@ -71,28 +72,31 @@ const signin = (req, res) => {
   res
     .cookie("userCookie", token)
     .status(200)
-    .json({ user: req.user, message: `Hello, ${req.user.first_name}` });
+    .json([{ user: req.user, message: `Hello, ${req.user.first_name}` }]);
+  // }catch(e){
+  //   res.json([{ error: `Connection not possible!` }]);
+  // }
+
 };
 const validateUserAndRedirect = (req, res) => {
-  // console.log(req.params);
   dbConnection
     .query(findByToken, [req.params.token])
     .then(([user]) => {
-      console.log(user);
       if (user[0] != null) {
         dbConnection
           .query(validateByToken, [true, req.params.token, req.params.token])
           .then(([result]) => {
-            console.log(result);
             if (result.affectedRows === 1) {
-              res
-                .status("200")
-                .json({ message: "Email validated! You can log in now!" });
+              res.status(200).json({
+                action: "login",
+                success: true,
+                redirectUrl: "/",
+                message: "Email validated! You can log in now!",
+              });
             } else {
-              res
-                .status("400")
-                .json({
-                  error: "Something went wrong! Contact the support team!" });
+              res.status("400").json({
+                error: "Something went wrong! Contact the support team!",
+              });
             }
           })
           .catch((err) => {

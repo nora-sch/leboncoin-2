@@ -12,7 +12,6 @@ const sendMail = async (emailHtml) => {
     secure: true,
     auth: {
       user: "nora.sumane@gmail.com",
-      //   pass: "kyeeraiqfjldzrcb"
       pass: process.env.GMAIL_APP_PASSWORD,
     },
   });

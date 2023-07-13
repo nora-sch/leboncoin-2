@@ -12,6 +12,7 @@ const hashingOptions = {
 
 const hashPassword = async (req, res, next) => {
   const pwd = req.body.password;
+
   // hash the password using argon2 then call next()
   argon2
     .hash(pwd, hashingOptions)
@@ -67,9 +68,11 @@ const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
   //   "email": "norah@inbox.lv",
   //   "password" :"Pa$$w0rd!"
   //  } FOR POSTMAN
+  console.log(req.body);
   dbConnection
     .query(findByEmailWithPwd, [req.body.email])
     .then(([users]) => {
+      console.log(users);
       if (users[0] != null) {
         req.user = users[0];
       } else {
