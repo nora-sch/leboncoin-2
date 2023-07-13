@@ -1,10 +1,15 @@
 const dbConnection = require("../database/connection");
 const jwt = require("jsonwebtoken");
+const uid = require("uid2");
+const communication  =require("../helpers/contactMailSms")
+
+
 const postOne =
   "INSERT INTO users (first_name, last_name, email, password, is_admin, avatar, created_at, updated_at, validation_token, is_validated) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 const getAll =
   "SELECT id, first_name, last_name, email, is_admin, avatar, created_at, updated_at FROM users";
 
+// const emailHtml = `<h1>Hello world!</h><p>Click below!</p> <p>This is the email verification link : </p>`;
 const getAllUsers = (req, res) => {
   dbConnection
     .query(getAll)
@@ -17,7 +22,11 @@ const getAllUsers = (req, res) => {
     });
 };
 const postUser = (req, res) => {
+  const validationToken = uid(100);
+  const host = "http://localhost:3000/";
   const { firstname, lastname, email, hashedPassword, avatar } = req.body;
+  const emailHtml = `<h1>Hello ${firstname}!</h><p>Click below to validate you email!</p> <p>${host}${validationToken} </p>`;
+
   dbConnection
     .query(postOne, [
       firstname,
@@ -28,11 +37,12 @@ const postUser = (req, res) => {
       avatar,
       new Date(),
       new Date(),
-      'ADD CRYPTED TOKEN',
-      false
+      validationToken,
+      false,
     ])
     .then(([result]) => {
       if (result.insertId != null) {
+        communication.sendMail(emailHtml).catch((e) => console.log(e));
         res.location(`/${result.insertId}`).sendStatus(201);
       } else {
         res.status(404).send("Not Found");
@@ -51,14 +61,16 @@ const logout = (req, res) => {
     .json({ message: "Successfully logged out :smirk: :four_leaf_clover:" });
 };
 
-
 const signin = (req, res) => {
   const payload = { sub: req.user.id };
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
   delete req.user.password;
-  res.cookie("userCookie", token).status(200).json({ user: req.user, message: `Hello, ${req.user.first_name}`});
+  res
+    .cookie("userCookie", token)
+    .status(200)
+    .json({ user: req.user, message: `Hello, ${req.user.first_name}` });
 };
 module.exports = {
   getAllUsers,
