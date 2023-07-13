@@ -51,6 +51,8 @@ const notify = (msg, type) => {
   }
 };
 function ConnectionModal({ open, setModalOpen }) {
+  const [emailLogin, setEmailLogin] = useState("");
+  const [passwordLogin, setPasswordLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -138,7 +140,9 @@ function ConnectionModal({ open, setModalOpen }) {
                       required
                       id="outlined-required"
                       label="Email"
-                      onChange={(e) => setEmail(e.target.value)}
+                      type="email"
+                      value={emailLogin}
+                      onChange={(e) => setEmailLogin(e.target.value)}
                     />
                     <FormHelperText id="my-helper-text">
                       We'll never share your email.
@@ -151,7 +155,8 @@ function ConnectionModal({ open, setModalOpen }) {
                       label="Password"
                       type="password"
                       autoComplete="current-password"
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={passwordLogin}
+                      onChange={(e) => setPasswordLogin(e.target.value)}
                     />
                   </FormControl>
                 </Box>
@@ -218,6 +223,7 @@ function ConnectionModal({ open, setModalOpen }) {
                       required
                       id="outlined-required"
                       label="First name"
+                      value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                     />
                   </FormControl>
@@ -226,6 +232,7 @@ function ConnectionModal({ open, setModalOpen }) {
                       required
                       id="outlined-required"
                       label="Last name"
+                      value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                     />
                   </FormControl>
@@ -234,6 +241,8 @@ function ConnectionModal({ open, setModalOpen }) {
                       required
                       id="outlined-required"
                       label="Email"
+                      type="email"
+                      value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                     <FormHelperText id="my-helper-text">
@@ -247,6 +256,7 @@ function ConnectionModal({ open, setModalOpen }) {
                       label="Password"
                       type="password"
                       autoComplete="current-password"
+                      value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </FormControl>
@@ -256,6 +266,7 @@ function ConnectionModal({ open, setModalOpen }) {
                       id="outlined-password-input"
                       label="Repeat password"
                       type="password"
+                      value={password2}
                       // autoComplete="current-password"
                       onChange={(e) => setPassword2(e.target.value)}
                     />
