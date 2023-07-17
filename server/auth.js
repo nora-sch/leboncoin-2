@@ -84,9 +84,7 @@ const verifyToken = (req, res, next) => {
     next();
   } catch (err) {
     console.error(err);
-    res
-    .status(401)
-    .json({
+    res.status(401).json({
       status: 401,
       error: "You have no permission - unauthorized!",
     });
@@ -114,12 +112,10 @@ const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
           });
         }
       } else {
-        res
-          .status(404)
-          .json({
-            status: 404,
-            error: "No user found with this email - sign up please!",
-          });
+        res.status(404).json({
+          status: 404,
+          error: "No user found with this email - sign up please!",
+        });
       }
     })
     .catch((err) => {
@@ -130,9 +126,9 @@ const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
     });
 };
 
-const isAdmin = (req, res, next)=>{
+const isAdmin = (req, res, next) => {
   console.log(req.params.id);
-  console.log( req.tokenUserId);
+  console.log(req.tokenUserId);
   dbConnection
     .query(selectUserById, [req.tokenUserId])
     .then(([users]) => {
@@ -140,7 +136,6 @@ const isAdmin = (req, res, next)=>{
       if (users[0] != null) {
         console.log(users[0]);
         if (users[0].is_admin) {
-          // req.user = users[0];
           next();
         } else {
           res.status(404).json({
@@ -149,12 +144,10 @@ const isAdmin = (req, res, next)=>{
           });
         }
       } else {
-        res
-          .status(404)
-          .json({
-            status: 404,
-            error: "You have no permission",
-          });
+        res.status(404).json({
+          status: 404,
+          error: "You have no permission",
+        });
       }
     })
     .catch((err) => {
@@ -163,16 +156,13 @@ const isAdmin = (req, res, next)=>{
         .status(500)
         .json({ status: 404, error: "Error retrieving data from database" });
     });
-}
-const isAdminOrUserWithRights = (req, res, next)=>{
-  
-}
+};
+
 module.exports = {
   isUser,
   hashPassword,
   verifyPassword,
   verifyToken,
   getUserByEmailWithPasswordAndPassToNext,
-  isAdminOrUserWithRights,
-  isAdmin
+  isAdmin,
 };

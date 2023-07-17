@@ -17,7 +17,7 @@ const {
   hashPassword,
   getUserByEmailWithPasswordAndPassToNext,
   isAdminOrUserWithRights,
-  isAdmin
+  isAdmin,
 } = require("./auth");
 //faker
 app.get("/faker", faker.hydrate);
@@ -44,21 +44,9 @@ app.get("/api/logout", userHandlers.logout);
 // app.put("/api/products/:id/comments/:id", commentHandlers.updateComment);
 
 // admin and user who has the specific post/comment
-app.delete(
-  "/api/products/:id/images/:id",
-  isAdminOrUserWithRights,
-  productHandlers.deleteOneImage
-);
-app.delete(
-  "/api/products/:id",
-  isAdminOrUserWithRights,
-  productHandlers.deleteProduct
-);
-app.delete(
-  "/api/products/:id/comments/:id",
-  isAdminOrUserWithRights,
-  commentHandlers.deleteComment
-);
+app.delete("/api/products/:id/images/:id", productHandlers.deleteOneImage);
+app.delete("/api/products/:id", productHandlers.deleteProduct);
+app.delete("/api/products/:id/comments/:id", commentHandlers.deleteComment);
 
 // only admin
 app.get("/api/products/:id/comments", isAdmin, commentHandlers.getAllByProduct);
