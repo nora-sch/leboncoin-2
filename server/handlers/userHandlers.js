@@ -44,13 +44,11 @@ const postUser = (req, res) => {
     .then(([result]) => {
       if (result.insertId != null) {
         communication.sendMail(email, emailHtml).catch((e) => console.log(e));
-        res
-          .status(201)
-          .json({
-            status: 201,
-            message:
-              "You have been signed up - check your email and click on the link to validate your account!",
-          });
+        res.status(201).json({
+          status: 201,
+          message:
+            "You have been signed up - check your email and click on the link to validate your account!",
+        });
       } else {
         res.status(404).json({ error: "Something went wrong" });
       }
@@ -97,7 +95,7 @@ const validateUserAndRedirect = (req, res) => {
                 action: "login",
                 success: true,
                 redirectUrl: "/",
-                message: "Email validated! You can log in now!",
+                message: `Email ${user[0].email} validated! You can log in now!`,
               });
             } else {
               res.status("400").json({
@@ -111,7 +109,10 @@ const validateUserAndRedirect = (req, res) => {
             res.status(500).send("Error retrieving data from database");
           });
       } else {
-        res.status(404).send("Not Found");
+        res.status("404").json({
+          status: 404,
+          error: "Token expired or you have already validated your account ",
+        });
       }
     })
     .catch((err) => {

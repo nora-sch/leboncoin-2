@@ -83,14 +83,13 @@ function ConnectionModal({ open, setModalOpen }) {
       if (sendLogin.status === 200) {
         const result = await sendLogin.json();
         console.log(result);
-
         notify(result[0].message, "success");
         dispatch(add(result[0].user));
         setModalOpen(false);
         // dispatch(add(user.user));
       } else {
         const error = await sendLogin.json();
-        notify(error[0].error, "error");
+        notify(error.error, "error");
       }
     };
     getUser();
@@ -144,7 +143,7 @@ function ConnectionModal({ open, setModalOpen }) {
           }
         })
         .catch((error) => {
-               notify(`${error.message}`, "error");
+          notify(`${error.message}`, "error");
         });
     };
     // });

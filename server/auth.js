@@ -3,7 +3,7 @@ const dbConnection = require("./database/connection");
 const jwt = require("jsonwebtoken");
 const isUserByEmail = "SELECT COUNT(*) as count FROM users WHERE email = ?";
 const findByEmailWithPwd =
-  "SELECT id, first_name, last_name, email, password, is_admin, avatar FROM users where email = ?";
+  "SELECT id, first_name, last_name, email, password, is_admin, is_validated, avatar FROM users where email = ?";
 const hashingOptions = {
   type: argon2.argon2id,
   memoryCost: 2 ** 16,
@@ -25,7 +25,7 @@ const isUser = (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({error:"Error retrieving data from database"});
+      res.status(500).json({ error: "Error retrieving data from database" });
     });
 };
 
@@ -81,6 +81,7 @@ const verifyToken = (req, res, next) => {
     res.sendStatus(401);
   }
 };
+const verifyIsValidated = (req, res, next) => {};
 const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
   // {
   //   "email": "norah@inbox.lv",
@@ -92,15 +93,28 @@ const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
     .then(([users]) => {
       console.log(users);
       if (users[0] != null) {
-        req.user = users[0];
+        console.log(users[0])
+        if (users[0].is_validated) {
+          req.user = users[0];
+          next();
+        } else {
+          res
+            .status(404)
+            .json({
+              status: 404,
+              error:
+                "You have to validate your account first! Check your email!",
+            });
+        }
       } else {
-        res.status(404).send("Not Found");
+        res.status(404).json({ status: 404, error: "Not Found" });
       }
-      next();
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send("Error retrieving data from database");
+      res
+        .status(500)
+        .json({ status: 404, error: "Error retrieving data from database" });
     });
 };
 
@@ -110,4 +124,5 @@ module.exports = {
   verifyPassword,
   verifyToken,
   getUserByEmailWithPasswordAndPassToNext,
+  verifyIsValidated,
 };

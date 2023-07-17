@@ -41,8 +41,10 @@ function SignupValidated({ setModalOpen }) {
           navigate("/");
         } else if (data.status === 404) {
           notify(data.error, "error");
+          navigate("/");
         } else {
           notify(data.error, "error");
+          navigate("/");
         }
       })
       .catch((error) => {
