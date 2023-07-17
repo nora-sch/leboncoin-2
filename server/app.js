@@ -16,23 +16,19 @@ const {
   verifyToken,
   hashPassword,
   getUserByEmailWithPasswordAndPassToNext,
+  isAdminOrUserWithRights,
+  isAdmin
 } = require("./auth");
 //faker
 app.get("/faker", faker.hydrate);
+
 //routes publiques
-// app.get("/", (req, res) => {
-//     res.send("LEBONCOIN");
-//   });
-// app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products/:id", productHandlers.getProductById);
-// app.post("/api/users", hashPassword, userHandlers.postUser);
 app.post("/api/signup", isUser, hashPassword, userHandlers.postUser);
 app.get("/api/validate/:token", userHandlers.validateUserAndRedirect);
 
-
 //if is validated
-// app.use(verifyIsValidated);
 app.post(
   "/api/login",
   getUserByEmailWithPasswordAndPassToNext,
@@ -40,18 +36,34 @@ app.post(
   userHandlers.signin
 );
 
-//routes privées
+// if signed in
 app.use(verifyToken); // verifyToken sera utilisé pour tt les routes qui suivent cette ligne
 app.post("/api/products", productHandlers.postProduct);
-app.delete("/api/products/:id", productHandlers.deleteProduct);
 app.post("/api/products/:id", commentHandlers.postComment);
 app.get("/api/logout", userHandlers.logout);
 // app.put("/api/products/:id/comments/:id", commentHandlers.updateComment);
-app.delete("/api/products/:id/comments/:id", commentHandlers.deleteComment);
-app.delete("/api/products/:id/images/:id", productHandlers.deleteOneImage);
-// //admin
-app.get("/api/products/:id/comments", commentHandlers.getAllByProduct);
-app.get("/api/users", userHandlers.getAllUsers);
+
+// admin and user who has the specific post/comment
+app.delete(
+  "/api/products/:id/images/:id",
+  isAdminOrUserWithRights,
+  productHandlers.deleteOneImage
+);
+app.delete(
+  "/api/products/:id",
+  isAdminOrUserWithRights,
+  productHandlers.deleteProduct
+);
+app.delete(
+  "/api/products/:id/comments/:id",
+  isAdminOrUserWithRights,
+  commentHandlers.deleteComment
+);
+
+// only admin
+app.get("/api/products/:id/comments", isAdmin, commentHandlers.getAllByProduct);
+app.get("/api/users", isAdmin, userHandlers.getAllUsers);
+
 // app.get("/api/users/:id", userHandlers.getUserById);
 // app.put("/api/users/:id", hashPassword, userHandlers.modifyUser);
 // app.delete("/api/users/:id", userHandlers.deleteUser);

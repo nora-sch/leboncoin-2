@@ -2,6 +2,8 @@ const argon2 = require("argon2");
 const dbConnection = require("./database/connection");
 const jwt = require("jsonwebtoken");
 const isUserByEmail = "SELECT COUNT(*) as count FROM users WHERE email = ?";
+const selectUserById = "SELECT * FROM users WHERE id = ?";
+
 const findByEmailWithPwd =
   "SELECT id, first_name, last_name, email, password, is_admin, is_validated, avatar FROM users where email = ?";
 const hashingOptions = {
@@ -58,13 +60,10 @@ const verifyPassword = (req, res, next) => {
       if (isVerified) {
         next();
       } else {
-   //TODO message  - bad credentials!!!! (login passwird inceorect or not signed up)
-        res
-        .status(401)
-        .json({
+        //TODO message  - bad credentials!!!! (login passwird inceorect or not signed up)
+        res.status(401).json({
           status: 401,
-          error:
-            "Password incorrect",
+          error: "Email or password incorrect",
         });
       }
     })
@@ -85,7 +84,12 @@ const verifyToken = (req, res, next) => {
     next();
   } catch (err) {
     console.error(err);
-    res.sendStatus(401);
+    res
+    .status(401)
+    .json({
+      status: 401,
+      error: "You have no permission - unauthorized!",
+    });
   }
 };
 const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
@@ -99,21 +103,23 @@ const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
     .then(([users]) => {
       console.log(users);
       if (users[0] != null) {
-        console.log(users[0])
+        console.log(users[0]);
         if (users[0].is_validated) {
           req.user = users[0];
           next();
         } else {
-          res
-            .status(404)
-            .json({
-              status: 404,
-              error:
-                "You have to validate your account first! Check your email!",
-            });
+          res.status(404).json({
+            status: 404,
+            error: "You have to validate your account first! Check your email!",
+          });
         }
       } else {
-        res.status(404).json({ status: 404, error: "No user found with this email - sign up please!" });
+        res
+          .status(404)
+          .json({
+            status: 404,
+            error: "No user found with this email - sign up please!",
+          });
       }
     })
     .catch((err) => {
@@ -124,10 +130,49 @@ const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
     });
 };
 
+const isAdmin = (req, res, next)=>{
+  console.log(req.params.id);
+  console.log( req.tokenUserId);
+  dbConnection
+    .query(selectUserById, [req.tokenUserId])
+    .then(([users]) => {
+      console.log(users);
+      if (users[0] != null) {
+        console.log(users[0]);
+        if (users[0].is_admin) {
+          // req.user = users[0];
+          next();
+        } else {
+          res.status(404).json({
+            status: 404,
+            error: "You have no permission",
+          });
+        }
+      } else {
+        res
+          .status(404)
+          .json({
+            status: 404,
+            error: "You have no permission",
+          });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res
+        .status(500)
+        .json({ status: 404, error: "Error retrieving data from database" });
+    });
+}
+const isAdminOrUserWithRights = (req, res, next)=>{
+  
+}
 module.exports = {
   isUser,
   hashPassword,
   verifyPassword,
   verifyToken,
   getUserByEmailWithPasswordAndPassToNext,
+  isAdminOrUserWithRights,
+  isAdmin
 };
