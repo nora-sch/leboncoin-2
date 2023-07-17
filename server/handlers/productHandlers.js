@@ -12,6 +12,8 @@ const getCommentsByProduct =
   "SELECT c.id, c.message, c.created_at, u.id as user_id, u.first_name, u.avatar FROM users u INNER JOIN comments c ON c.user_id=u.id WHERE c.product_id = ?";
 const deleteImage = "DELETE from product_images WHERE id=?";
 const selectUserById = "SELECT * FROM users WHERE id = ?";
+const findImageById =
+  "SELECT u.id from users as u INNER JOIN products as p ON p.user_id = u.id INNER JOIN product_images as i ON i.product_id = p.id WHERE i.id = ?";
 const postProduct = (req, res) => {
   //   {
   //     "name": "SAMSUNG X-6",
@@ -97,8 +99,7 @@ const deleteProduct = (req, res) => {
     .query(findById, [productId])
     .then(([product]) => {
       if (product[0] != null) {
-        dbConnection.query(selectUserById, [userId])
-        .then(([user]) => {
+        dbConnection.query(selectUserById, [userId]).then(([user]) => {
           if (user[0].is_admin || user[0].id === product[0].user_id) {
             dbConnection
               .query(deleteOne, [productId])
@@ -121,6 +122,10 @@ const deleteProduct = (req, res) => {
           }
         });
       } else {
+        res.status(404).json({
+          status: 404,
+          error: "Product doesn't exist",
+        });
       }
     })
     .catch((err) => {
@@ -130,14 +135,41 @@ const deleteProduct = (req, res) => {
 };
 
 const deleteOneImage = (req, res) => {
-  const id = parseInt(req.params.id);
+  const imageId = parseInt(req.params.id);
+  const userId = parseInt(req.tokenUserId);
   dbConnection
-    .query(deleteImage, [id])
-    .then(([result]) => {
-      if (result.affectedRows === 0) {
-        res.status(404).send("Not Found");
+    .query(findImageById, [imageId])
+    .then(([imageUserId]) => {
+      console.log(imageUserId);
+      const userIdOfProduct = imageUserId[0].id;
+      if (imageUserId[0].id != null) {
+        dbConnection.query(selectUserById, [userId]).then(([user]) => {
+          if (user[0].is_admin || user[0].id === imageUserId[0].id) {
+            dbConnection
+              .query(deleteImage, [imageId])
+              .then(([result]) => {
+                if (result.affectedRows === 0) {
+                  res.status(404).json({error: "Not Found"});
+                } else {
+                  res.status(202).json({ message: `Image deleted` });
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+                res.status(500).send("Error retrieving data from database");
+              });
+          } else {
+            res.status(404).json({
+              status: 404,
+              error: "You have no permission",
+            });
+          }
+        });
       } else {
-        res.status(202).json({ message: `Image deleted` });
+        res.status(404).json({
+          status: 404,
+          error: "Image doesn't exist",
+        });
       }
     })
     .catch((err) => {
