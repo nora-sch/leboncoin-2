@@ -5,7 +5,7 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
 
-const sendMail = async (emailHtml) => {
+const sendMail = async (emailTo, emailHtml) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -17,7 +17,7 @@ const sendMail = async (emailHtml) => {
   });
   const info = await transporter.sendMail({
     from: "Nora <nora.sumane@gmail.com>",
-    to: "nora.sumane@gmail.com",
+    to: emailTo,
     subject: "test nodmailer",
     html: emailHtml,
   });

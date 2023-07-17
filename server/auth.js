@@ -16,10 +16,8 @@ const isUser = (req, res, next) => {
     .query(isUserByEmail, [req.body.email])
     .then(([count]) => {
       if (count[0].count === 0) {
-        console.log(count[0].count);
         next();
       } else {
-        console.log("je suis ici");
         res
           .status(404)
           .json({ status: 404, error: "You have already signed up!" });

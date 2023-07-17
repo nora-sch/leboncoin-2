@@ -43,10 +43,16 @@ const postUser = (req, res) => {
     ])
     .then(([result]) => {
       if (result.insertId != null) {
-        communication.sendMail(emailHtml).catch((e) => console.log(e));
-        res.status(201).json({status: 201, message:"You have been signed up - check your email and click on the link to validate your account!"});
+        communication.sendMail(email, emailHtml).catch((e) => console.log(e));
+        res
+          .status(201)
+          .json({
+            status: 201,
+            message:
+              "You have been signed up - check your email and click on the link to validate your account!",
+          });
       } else {
-        res.status(404).json({error:"Something went wrong"});
+        res.status(404).json({ error: "Something went wrong" });
       }
     })
     .catch((err) => {
@@ -64,7 +70,7 @@ const logout = (req, res) => {
 
 const signin = (req, res) => {
   // try{
-      const payload = { sub: req.user.id };
+  const payload = { sub: req.user.id };
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "30",
   });
@@ -76,7 +82,6 @@ const signin = (req, res) => {
   // }catch(e){
   //   res.json([{ error: `Connection not possible!` }]);
   // }
-
 };
 const validateUserAndRedirect = (req, res) => {
   dbConnection
@@ -88,6 +93,7 @@ const validateUserAndRedirect = (req, res) => {
           .then(([result]) => {
             if (result.affectedRows === 1) {
               res.status(200).json({
+                status: 200,
                 action: "login",
                 success: true,
                 redirectUrl: "/",
@@ -95,6 +101,7 @@ const validateUserAndRedirect = (req, res) => {
               });
             } else {
               res.status("400").json({
+                status: 400,
                 error: "Something went wrong! Contact the support team!",
               });
             }

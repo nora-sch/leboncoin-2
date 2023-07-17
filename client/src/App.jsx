@@ -7,6 +7,7 @@ import "./App.css";
 import ConnectionModal from "./components/ConnectionModal";
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
+import SignupValidated from "./pages/SignupValidated";
 
 function App() {
   // Modal
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products/:id" element={<Product />} />
+          <Route path="/validate/:token" element={<SignupValidated setModalOpen={setOpen} /> } />
           {/* <Route
             path="/profile"
             element={
