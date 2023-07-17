@@ -11,6 +11,7 @@ const deleteOne = "DELETE from products WHERE id = ?";
 const getCommentsByProduct =
   "SELECT c.id, c.message, c.created_at, u.id as user_id, u.first_name, u.avatar FROM users u INNER JOIN comments c ON c.user_id=u.id WHERE c.product_id = ?";
 const deleteImage = "DELETE from product_images WHERE id=?";
+const selectUserById = "SELECT * FROM users WHERE id = ?";
 const postProduct = (req, res) => {
   //   {
   //     "name": "SAMSUNG X-6",
@@ -63,9 +64,9 @@ const getProductById = (req, res) => {
   dbConnection
     .query(findById, [parseInt(req.params.id)])
     .then(([products]) => {
-      console.log(products)
+      console.log(products);
       if (products[0] != null) {
-            const product = products[0];
+        const product = products[0];
         let productComments = {};
         dbConnection
           .query(getCommentsByProduct, [parseInt(req.params.id)])
@@ -90,14 +91,36 @@ const getProductById = (req, res) => {
 };
 
 const deleteProduct = (req, res) => {
-  const id = parseInt(req.params.id);
+  const productId = parseInt(req.params.id);
+  const userId = parseInt(req.tokenUserId);
   dbConnection
-    .query(deleteOne, [id])
-    .then(([result]) => {
-      if (result.affectedRows === 0) {
-        res.status(404).send("Not Found");
+    .query(findById, [productId])
+    .then(([product]) => {
+      if (product[0] != null) {
+        dbConnection.query(selectUserById, [userId])
+        .then(([user]) => {
+          if (user[0].is_admin || user[0].id === product[0].user_id) {
+            dbConnection
+              .query(deleteOne, [productId])
+              .then(([result]) => {
+                if (result.affectedRows === 0) {
+                  res.status(404).send("Not Found");
+                } else {
+                  res.status(202).json({ message: `Product deleted` });
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+                res.status(500).send("Error retrieving data from database");
+              });
+          } else {
+            res.status(404).json({
+              status: 404,
+              error: "You have no permission",
+            });
+          }
+        });
       } else {
-        res.status(202).json({ message: `Product deleted` });
       }
     })
     .catch((err) => {
@@ -105,6 +128,7 @@ const deleteProduct = (req, res) => {
       res.status(500).send("Error retrieving data from database");
     });
 };
+
 const deleteOneImage = (req, res) => {
   const id = parseInt(req.params.id);
   dbConnection
@@ -120,7 +144,6 @@ const deleteOneImage = (req, res) => {
       console.error(err);
       res.status(500).send("Error retrieving data from database");
     });
-
 };
 
 module.exports = {
@@ -128,5 +151,5 @@ module.exports = {
   getAllProducts,
   getProductById,
   deleteProduct,
-  deleteOneImage
+  deleteOneImage,
 };

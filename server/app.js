@@ -46,7 +46,7 @@ app.get("/api/logout", userHandlers.logout);
 // admin and user who has the specific post/comment
 app.delete("/api/products/:id/images/:id", productHandlers.deleteOneImage);
 app.delete("/api/products/:id", productHandlers.deleteProduct);
-app.delete("/api/products/:id/comments/:id", commentHandlers.deleteComment);
+app.delete("/api/products/:id/comments/:id", commentHandlers.deleteComment); //ok
 
 // only admin
 app.get("/api/products/:id/comments", isAdmin, commentHandlers.getAllByProduct);
