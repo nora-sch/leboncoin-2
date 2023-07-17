@@ -130,25 +130,21 @@ function ConnectionModal({ open, setModalOpen }) {
       })
         .then((response) => {
           console.log(response);
-          if (response.ok) {
-            return response.json();
-          } else {
-            notify(`Server error ${response.status}`, "error");
-          }
+          return response.json();
         })
         .then((data) => {
           console.log(data);
-          // if (data.status === 201) {
-
-          // console.log('couc')
-          setModalOpen(false);
-          notify(data.message, "success");
-
-          // } else if (data.status === 400) {
-          //   notify(data.message, "error");
-          // } else {
-          //   notify(data.error, "error");
-          // }
+          if (data.status === 201) {
+            setModalOpen(false);
+            notify(data.message, "success");
+          } else if (data.status === 404) {
+            notify(data.error, "error");
+          } else {
+            notify(data.error, "error");
+          }
+        })
+        .catch((error) => {
+               notify(`${error.message}`, "error");
         });
     };
     // });

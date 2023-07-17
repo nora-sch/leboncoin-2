@@ -1,11 +1,12 @@
 const { faker } = require("@faker-js/faker");
 const argon2 = require("argon2");
 const dbConnection = require("../database/connection");
+const uid = require("uid2");
 const postOneUser =
-  "INSERT INTO users (first_name, last_name, email, password, is_admin, avatar, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+  "INSERT INTO users (first_name, last_name, email, password, is_admin, avatar, created_at, updated_at, validation_token, is_validated) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 const postOneProduct =
-  "INSERT INTO products (name, description, price, created_at, updated_at, user_id, validation_token, is_validated) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+  "INSERT INTO products (name, description, price, created_at, updated_at, user_id) VALUES(?, ?, ?, ?, ?, ?)";
 const addImage = "INSERT INTO product_images (product_id, link) VALUES (?,?)";
 const postOneComment =
   "INSERT INTO comments (message, created_at, updated_at, user_id, product_id) VALUES(?, ?, ?, ?, ?)";
@@ -37,7 +38,7 @@ const hydrate = (req, res) => {
           faker.internet.avatar(),
           new Date(),
           new Date(),
-          'ADD CRYPTED TOKEN',
+          uid(100),
           false
         ])
         .then(([result]) => {
@@ -82,7 +83,7 @@ const hydrate = (req, res) => {
                         ])
                         .then(([result4]) => {
                           if (result4.insertId != null) {
-                            //do spmething
+                           res.status(200).send("DATABASE HYDRATED!")
                           } else {
                             res.status(404).send("Not found");
                           }

@@ -14,9 +14,11 @@ export const signInSlice = createSlice({
     },
     remove: (state) => {
       state.user = null;
+      localStorage.removeItem("user");
     },
   },
 });
 
 export const { add, remove } = signInSlice.actions;
 export default signInSlice.reducer;
+

@@ -12,7 +12,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 
 import MenuIcon from "@mui/icons-material/Menu";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { remove } from "../features/signInSlice";
@@ -63,21 +63,24 @@ function NavigationBar({ setModalOpen }) {
   };
   const logOut = () => {
     const removeToken = async () => {
-      const sendLogin = await fetch("/api/logout", {
+      const sendLogout = await fetch("/api/logout", {
         method: "GET",
       });
-      if (sendLogin.status === 200) {
-        const result = await sendLogin.json();
+      if (sendLogout.status === 200) {
+        const result = await sendLogout.json();
         console.log(result);
-        notify(result.message, "success");
+        notify(result[0].message, "success");
+  
       } else {
-        const error = await sendLogin.json();
-        notify(error[0].error, "error"); // TODO
+        // const error = await sendLogout.json();
+        // notify(error[0].error, "error"); // TODO
       }
     };
     removeToken();
     navigate("/");
     dispatch(remove());
+    handleCloseNavMenu();
+    handleCloseUserMenu();
   };
 
   return (

@@ -44,9 +44,9 @@ const postUser = (req, res) => {
     .then(([result]) => {
       if (result.insertId != null) {
         communication.sendMail(emailHtml).catch((e) => console.log(e));
-        res.status(201).json({message:"You have been signed up - check your email and click on the link to validate your account!"});
+        res.status(201).json({status: 201, message:"You have been signed up - check your email and click on the link to validate your account!"});
       } else {
-        res.status(404).json({error:"Not Found"});
+        res.status(404).json({error:"Something went wrong"});
       }
     })
     .catch((err) => {
@@ -59,14 +59,14 @@ const logout = (req, res) => {
   return res
     .clearCookie("userCookie")
     .status(200)
-    .json({ message: "Successfully logged out" });
+    .json([{ message: "Successfully logged out" }]);
 };
 
 const signin = (req, res) => {
   // try{
       const payload = { sub: req.user.id };
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "30",
   });
   delete req.user.password;
   res

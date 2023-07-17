@@ -1,6 +1,7 @@
 const argon2 = require("argon2");
 const dbConnection = require("./database/connection");
 const jwt = require("jsonwebtoken");
+const isUserByEmail = "SELECT COUNT(*) as count FROM users WHERE email = ?";
 const findByEmailWithPwd =
   "SELECT id, first_name, last_name, email, password, is_admin, avatar FROM users where email = ?";
 const hashingOptions = {
@@ -8,6 +9,26 @@ const hashingOptions = {
   memoryCost: 2 ** 16,
   timeCost: 5,
   parallelism: 1,
+};
+
+const isUser = (req, res, next) => {
+  dbConnection
+    .query(isUserByEmail, [req.body.email])
+    .then(([count]) => {
+      if (count[0].count === 0) {
+        console.log(count[0].count);
+        next();
+      } else {
+        console.log("je suis ici");
+        res
+          .status(404)
+          .json({ status: 404, error: "You have already signed up!" });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({error:"Error retrieving data from database"});
+    });
 };
 
 const hashPassword = async (req, res, next) => {
@@ -30,17 +51,16 @@ const hashPassword = async (req, res, next) => {
 
 const verifyPassword = (req, res, next) => {
   console.log(req.user.password);
-  console.log('body')
-  console.log(req.body.password)
+  console.log("body");
+  console.log(req.body.password);
   argon2
     .verify(req.user.password, req.body.password)
     .then((isVerified) => {
-      console.log(isVerified)
+      console.log(isVerified);
       if (isVerified) {
         next();
       } else {
-
-        res.sendStatus(401);
+        res.sendStatus(401); //TODO message  - bad credentials!!!! (login passwird inceorect or not signed up)
       }
     })
     .catch((err) => {
@@ -87,6 +107,7 @@ const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
 };
 
 module.exports = {
+  isUser,
   hashPassword,
   verifyPassword,
   verifyToken,
