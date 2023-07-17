@@ -16,7 +16,6 @@ const {
   verifyToken,
   hashPassword,
   getUserByEmailWithPasswordAndPassToNext,
-  verifyIsValidated
 } = require("./auth");
 //faker
 app.get("/faker", faker.hydrate);

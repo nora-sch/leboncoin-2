@@ -58,7 +58,14 @@ const verifyPassword = (req, res, next) => {
       if (isVerified) {
         next();
       } else {
-        res.sendStatus(401); //TODO message  - bad credentials!!!! (login passwird inceorect or not signed up)
+   //TODO message  - bad credentials!!!! (login passwird inceorect or not signed up)
+        res
+        .status(401)
+        .json({
+          status: 401,
+          error:
+            "Password incorrect",
+        });
       }
     })
     .catch((err) => {
@@ -81,7 +88,6 @@ const verifyToken = (req, res, next) => {
     res.sendStatus(401);
   }
 };
-const verifyIsValidated = (req, res, next) => {};
 const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
   // {
   //   "email": "norah@inbox.lv",
@@ -107,7 +113,7 @@ const getUserByEmailWithPasswordAndPassToNext = (req, res, next) => {
             });
         }
       } else {
-        res.status(404).json({ status: 404, error: "Not Found" });
+        res.status(404).json({ status: 404, error: "No user found with this email - sign up please!" });
       }
     })
     .catch((err) => {
@@ -124,5 +130,4 @@ module.exports = {
   verifyPassword,
   verifyToken,
   getUserByEmailWithPasswordAndPassToNext,
-  verifyIsValidated,
 };
