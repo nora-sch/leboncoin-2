@@ -4,6 +4,7 @@ const uid = require("uid2");
 const communication = require("../helpers/contactMailSms");
 // const { uploadImage } = require("../upload/upload");
 const cloudinary = require("cloudinary");
+const fs = require("fs");
 require("../upload/upload");
 const multer = require("multer");
 const upload = multer({ dest: "../upload/files/temp" });
@@ -62,6 +63,9 @@ const postUser = (req, res) => {
           false,
         ])
         .then(([result]) => {
+          //delete image from temp folder
+          fs.unlink(req.file.path, (err) => console.log(err));
+          //return response
           if (result.insertId != null) {
             communication
               .sendMail(email, emailHtml)
