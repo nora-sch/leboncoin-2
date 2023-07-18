@@ -9,10 +9,12 @@ import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
 
 function ProductCard(product) {
-  console.log(product);
   return (
     <Card sx={{ maxWidth: 345 }} style={{ height: "100%" }}>
-      <Link  to={`/products/${product.product.id}`} style={{ color: "white", textDecoration: "none" }}>
+      <Link
+        to={`/products/${product.product.id}`}
+        style={{ color: "white", textDecoration: "none" }}
+      >
         <CardMedia
           component="img"
           alt={product.product.name}
