@@ -2,6 +2,11 @@ const dbConnection = require("../database/connection");
 const jwt = require("jsonwebtoken");
 const uid = require("uid2");
 const communication = require("../helpers/contactMailSms");
+// const { uploadImage } = require("../upload/upload");
+const cloudinary = require("cloudinary");
+require("../upload/upload");
+const multer = require("multer");
+const upload = multer({ dest: "../upload/files/temp" });
 
 const postOne =
   "INSERT INTO users (first_name, last_name, email, password, is_admin, avatar, created_at, updated_at, validation_token, is_validated) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -25,37 +30,55 @@ const getAllUsers = (req, res) => {
 const postUser = (req, res) => {
   const validationToken = uid(100);
   const host = "http://localhost:3000/validate/";
-  const { firstName, lastName, email, hashedPassword, avatar } = req.body;
+  const { firstName, lastName, email, hashedPassword } = req.body;
   const emailHtml = `<h1>Hello ${firstName}!</h><p>Click below to validate you email!</p> <p>${host}${validationToken} </p>`;
 
-  dbConnection
-    .query(postOne, [
-      firstName,
-      lastName,
-      email,
-      hashedPassword,
-      false,
-      avatar,
-      new Date(),
-      new Date(),
-      validationToken,
-      false,
-    ])
-    .then(([result]) => {
-      if (result.insertId != null) {
-        communication.sendMail(email, emailHtml).catch((e) => console.log(e));
-        res.status(201).json({
-          status: 201,
-          message:
-            "You have been signed up - check your email and click on the link to validate your account!",
-        });
-      } else {
-        res.status(404).json({ error: "Something went wrong" });
+  // console.log(req.file);
+  // console.log(req.body);
+  // const avatar = uploadImage(req.file);
+  // console.log(avatar);
+  // console.log(email)
+
+  cloudinary.v2.uploader
+    .upload(
+      req.file.path,
+      { public_id: req.file.filename, folder: "Leboncoin" },
+      function (error, result) {
+        console.log(result);
       }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send(`Error retrieving data from database - ${err}`);
+    )
+    .then((data) => {
+      dbConnection
+        .query(postOne, [
+          firstName,
+          lastName,
+          email,
+          hashedPassword,
+          false,
+          data.url,
+          new Date(),
+          new Date(),
+          validationToken,
+          false,
+        ])
+        .then(([result]) => {
+          if (result.insertId != null) {
+            communication
+              .sendMail(email, emailHtml)
+              .catch((e) => console.log(e));
+            res.status(201).json({
+              status: 201,
+              message:
+                "You have been signed up - check your email and click on the link to validate your account!",
+            });
+          } else {
+            res.status(404).json({ error: "Something went wrong" });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).send(`Error retrieving data from database - ${err}`);
+        });
     });
 };
 

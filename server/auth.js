@@ -14,6 +14,7 @@ const hashingOptions = {
 };
 
 const isUser = (req, res, next) => {
+  console.log(req.body);
   dbConnection
     .query(isUserByEmail, [req.body.email])
     .then(([count]) => {

@@ -96,12 +96,18 @@ function ConnectionModal({ open, setModalOpen }) {
   };
   const verifyAndSignUp = (e) => {
     e.preventDefault();
-    // const formData = new FormData();
-    // formData.append("file", avatar);
+
     // formData.append("upload_preset", "upload_token"); // name of upload token fromp cloudinary (settings --> upload)
     // // console.log(formData);
     // // https://api.cloudinary.com/v1_1/:cloud_name/:action
     const signUp = () => {
+      const formData = new FormData();
+      formData.append("avatar", avatar[0], avatar[0].name);
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      formData.append("password", password);
+
       //   fetch("https://api.cloudinary.com/v1_1/cloudinarynora/image/upload", {
       //     method: "POST",
       //     body: formData,
@@ -114,18 +120,16 @@ function ConnectionModal({ open, setModalOpen }) {
       //     .then((data) => {
       fetch("/api/signup", {
         method: "POST",
-        body: JSON.stringify({
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          password: password,
-          avatar: null,
-          //  avatar: data.url,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          // "token":
-        },
+        // body: JSON.stringify({
+        body: formData,
+        // headers:{'Content-Type': 'multipart/form-data'}
+        // firstName: firstName,
+        // lastName: lastName,
+        // email: email,
+        // password: password,
+        // avatar: formData,
+        //  avatar: data.url,
+        // }),
       })
         .then((response) => {
           console.log(response);
@@ -323,12 +327,11 @@ function ConnectionModal({ open, setModalOpen }) {
 
                   <FormControl style={textInputStyle}>
                     <TextField
-                      id="outlined-password-input"
+                      id="outlined-files-input"
                       label="Avatar"
                       name="upload-photo"
                       type="file"
-                      // autoComplete="current-password"
-                      onChange={(e) => setAvatar(e.target.value)}
+                      onChange={(e) => setAvatar(e.currentTarget.files)}
                     />
                   </FormControl>
                 </Box>

@@ -1,11 +1,12 @@
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') })
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const nodemailer = require("nodemailer");
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require("twilio")(accountSid, authToken);
 
 const sendMail = async (emailTo, emailHtml) => {
+  console.log(emailTo);
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -31,9 +32,7 @@ const sendSms = (msg, phoneTo = "+37126339023") => {
       from: "+16203203081",
       to: phoneTo,
     })
-    .then((message) =>
-      console.log(`${message.sid} - sent to ${message.to}`)
-    );
+    .then((message) => console.log(`${message.sid} - sent to ${message.to}`));
 
   //   {
   //     "account_sid": "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",

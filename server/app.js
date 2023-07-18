@@ -5,11 +5,21 @@ const port = process.env.PORT;
 app.use(express.json());
 var cookieParser = require("cookie-parser");
 app.use(cookieParser());
+// app.use(
+//   fileUpload({
+//     useTempFiles: true,
+//     safeFileNames: true,
+//     preserveExtension: true,
+//     tempFileDir: `../public/files/temp`,
+//   })
+// );
 
 const productHandlers = require("./handlers/productHandlers");
 const userHandlers = require("./handlers/userHandlers");
 const commentHandlers = require("./handlers/commentHandlers");
 const faker = require("./faker/faker");
+const multer  = require('multer')
+const upload = multer({ dest: '../upload/files/temp' })
 const {
   isUser,
   verifyPassword,
@@ -25,7 +35,8 @@ app.get("/faker", faker.hydrate);
 //routes publiques
 app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products/:id", productHandlers.getProductById);
-app.post("/api/signup", isUser, hashPassword, userHandlers.postUser);
+app.post("/api/signup",upload.single('avatar'), isUser, hashPassword,  userHandlers.postUser);
+// app.post("/api/signup", upload.single('avatar'), userHandlers.postUser);
 app.get("/api/validate/:token", userHandlers.validateUserAndRedirect);
 
 //if is validated
