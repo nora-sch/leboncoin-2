@@ -3,7 +3,7 @@ const postOne =
   "INSERT INTO products (name, description, price, created_at, updated_at, user_id) VALUES(?, ?, ?, ?, ?, ?)";
 const addImage = "INSERT INTO product_images (product_id, link) VALUES (?,?)";
 const getAll =
-  "SELECT p.*, pi.id as image_id, pi.link FROM products p LEFT JOIN product_images pi ON pi.product_id=p.id";
+  "SELECT p.*, pi.id as image_id, pi.link, u.first_name, u.last_name, u.avatar FROM products AS p LEFT JOIN product_images AS pi ON pi.product_id=p.id INNER JOIN users AS u ON p.user_id=u.id";
 const findById =
   "SELECT p.*, pi.id as image_id, pi.link FROM products p LEFT JOIN product_images pi ON pi.product_id=p.id WHERE p.id = ?";
 

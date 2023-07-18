@@ -96,10 +96,6 @@ function ConnectionModal({ open, setModalOpen }) {
   };
   const verifyAndSignUp = (e) => {
     e.preventDefault();
-
-    // formData.append("upload_preset", "upload_token"); // name of upload token fromp cloudinary (settings --> upload)
-    // // console.log(formData);
-    // // https://api.cloudinary.com/v1_1/:cloud_name/:action
     const signUp = () => {
       const formData = new FormData();
       formData.append("avatar", avatar[0], avatar[0].name);
@@ -107,29 +103,9 @@ function ConnectionModal({ open, setModalOpen }) {
       formData.append("lastName", lastName);
       formData.append("email", email);
       formData.append("password", password);
-
-      //   fetch("https://api.cloudinary.com/v1_1/cloudinarynora/image/upload", {
-      //     method: "POST",
-      //     body: formData,
-      //   })
-      //     .then((response) => {
-      //       if (response.ok) {
-      //         return response.json();
-      //       }
-      //     })
-      //     .then((data) => {
-      fetch("/api/signup", {
+        fetch("/api/signup", {
         method: "POST",
-        // body: JSON.stringify({
         body: formData,
-        // headers:{'Content-Type': 'multipart/form-data'}
-        // firstName: firstName,
-        // lastName: lastName,
-        // email: email,
-        // password: password,
-        // avatar: formData,
-        //  avatar: data.url,
-        // }),
       })
         .then((response) => {
           console.log(response);

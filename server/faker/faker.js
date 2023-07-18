@@ -39,7 +39,7 @@ const hydrate = (req, res) => {
           new Date(),
           new Date(),
           uid(100),
-          false
+          false,
         ])
         .then(([result]) => {
           if (result.insertId != null) {
@@ -50,7 +50,7 @@ const hydrate = (req, res) => {
                 .query(postOneProduct, [
                   faker.commerce.product(),
                   faker.commerce.productDescription(),
-                  faker.commerce.price({ min: 100, max: 1000000, dec: 0 }),
+                  faker.commerce.price({ min: 100, max: 100000, dec: 0 }),
                   new Date(),
                   new Date(),
                   userId,
@@ -83,7 +83,7 @@ const hydrate = (req, res) => {
                         ])
                         .then(([result4]) => {
                           if (result4.insertId != null) {
-                           res.status(200).send("DATABASE HYDRATED!")
+                            // res.status(200).send("DATABASE HYDRATED!");
                           } else {
                             res.status(404).send("Not found");
                           }
@@ -119,7 +119,56 @@ const hydrate = (req, res) => {
     });
   }
 };
-
+const deleteAll = (req, res) => {
+  const comments = " DELETE from comments";
+  const productImages = " DELETE from product_images";
+  const products = " DELETE from products";
+  const users = " DELETE from users";
+  dbConnection
+    .query(comments)
+    .then(([result1]) => {
+      console.log(result1);
+      dbConnection
+        .query(productImages)
+        .then(([result2]) => {
+          console.log(result2);
+          dbConnection
+            .query(products)
+            .then(([result3]) => {
+              console.log(result3);
+              dbConnection
+                .query(users)
+                .then(([result4]) => {
+                  console.log(result4);
+                })
+                .catch((err) => {
+                  console.error(err);
+                  res
+                    .status(500)
+                    .send(`Error retrieving data from database - ${err}`);
+                });
+            })
+            .catch((err) => {
+              console.error(err);
+              res
+                .status(500)
+                .send(`Error retrieving data from database - ${err}`);
+            });
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).send(`Error retrieving data from database - ${err}`);
+        });
+    })
+    .then(() => {
+      res.status(200).send("DATABASE CONTENTS DELETED!");
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send(`Error retrieving data from database - ${err}`);
+    });
+};
 module.exports = {
   hydrate,
+  deleteAll,
 };

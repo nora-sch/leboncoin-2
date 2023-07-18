@@ -54,7 +54,7 @@ function SignupValidated({ setModalOpen }) {
   // });
   passToValidated();
 
-  return <div>SignupValidated</div>;
+  return <div></div>;
 }
 
 export default SignupValidated;

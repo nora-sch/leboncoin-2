@@ -5,14 +5,6 @@ const port = process.env.PORT;
 app.use(express.json());
 var cookieParser = require("cookie-parser");
 app.use(cookieParser());
-// app.use(
-//   fileUpload({
-//     useTempFiles: true,
-//     safeFileNames: true,
-//     preserveExtension: true,
-//     tempFileDir: `../public/files/temp`,
-//   })
-// );
 
 const productHandlers = require("./handlers/productHandlers");
 const userHandlers = require("./handlers/userHandlers");
@@ -31,6 +23,8 @@ const {
 } = require("./auth");
 //faker
 app.get("/faker", faker.hydrate);
+//delete all
+app.delete("/delete", faker.deleteAll)
 
 //routes publiques
 app.get("/api/products", productHandlers.getAllProducts);
