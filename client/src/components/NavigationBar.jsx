@@ -70,7 +70,6 @@ function NavigationBar({ setModalOpen }) {
         const result = await sendLogout.json();
         console.log(result);
         notify(result[0].message, "success");
-  
       } else {
         // const error = await sendLogout.json();
         // notify(error[0].error, "error"); // TODO
@@ -91,7 +90,7 @@ function NavigationBar({ setModalOpen }) {
             variant="h6"
             noWrap
             component="a"
-            href="/"
+            // href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -184,22 +183,35 @@ function NavigationBar({ setModalOpen }) {
                   </Link>
                 </Button>
               </Box>
-              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                <Button
-                  key="home"
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: "white", display: "block" }}
-                >
-                  DASHBOARD
-                </Button>
-              </Box>
+              {user && user.is_admin ? (
+                <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+                  <Button
+                    key="home"
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: "white", display: "block" }}
+                  >
+                    <Link
+                      to="/dashboard"
+                      style={{ color: "white", textDecoration: "none" }}
+                    >
+                      DASHBOARD
+                    </Link>
+                  </Button>
+                </Box>
+              ) : (
+                ""
+              )}
             </Box>
 
             <Box sx={{ flexGrow: 0 }}>
               {user && <div>{user.first_name}</div>}
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="user avatar" src="" />
+                  {user ? (
+                    <Avatar alt="user avatar" src={user.avatar} />
+                  ) : (
+                    <Avatar alt="user avatar" src="" />
+                  )}
                 </IconButton>
               </Tooltip>
               <MenuList

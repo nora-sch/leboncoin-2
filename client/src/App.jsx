@@ -2,12 +2,14 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 import Home from "./pages/Home";
 import Product from "./pages/Product";
+import Dashboard from "./pages/Dashboard";
 import NavigationBar from "./components/NavigationBar";
 import "./App.css";
 import ConnectionModal from "./components/ConnectionModal";
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import SignupValidated from "./pages/SignupValidated";
+import Auth from "./Auth";
 
 function App() {
   // Modal
@@ -21,17 +23,18 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products/:id" element={<Product />} />
-          <Route path="/validate/:token" element={<SignupValidated setModalOpen={setOpen} /> } />
-          {/* <Route
-            path="/profile"
+          <Route
+            path="/validate/:token"
+            element={<SignupValidated setModalOpen={setOpen} />}
+          />
+          <Route
+            path="/dashboard"
             element={
               <Auth>
-                <Profile />
+                <Dashboard />
               </Auth>
             }
-          /> */}
-          {/* <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/sign-in" element={<SignIn />} /> */}
+          />
         </Routes>
         <ConnectionModal open={open} setModalOpen={setOpen} />
       </Main>
