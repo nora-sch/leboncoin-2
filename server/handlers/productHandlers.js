@@ -9,7 +9,7 @@ const findById =
 
 const deleteOne = "DELETE from products WHERE id = ?";
 const getCommentsByProduct =
-  "SELECT c.id, c.message, c.created_at, u.id as user_id, u.first_name, u.avatar FROM users u INNER JOIN comments c ON c.user_id=u.id WHERE c.product_id = ?";
+  "SELECT c.id, c.message, c.created_at, u.id as user_id, u.first_name, u.avatar FROM users u INNER JOIN comments c ON c.user_id=u.id WHERE c.product_id = ? ORDER BY c.created_at DESC";
 const deleteImage = "DELETE from product_images WHERE id=?";
 const selectUserById = "SELECT * FROM users WHERE id = ?";
 const findImageById =

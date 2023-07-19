@@ -57,7 +57,6 @@ function ConnectionModal({ open, setModalOpen }) {
         }),
         headers: {
           "Content-Type": "application/json",
-          // "token":
         },
       });
 

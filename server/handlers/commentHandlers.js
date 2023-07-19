@@ -6,22 +6,26 @@ const getAll =
   "SELECT c.message, c.created_at, u.id as user_id, u.first_name, u.avatar FROM users u INNER JOIN comments c ON c.user_id=u.id WHERE c.product_id = ?";
 const deleteOne = "DELETE from comments WHERE id = ?";
 const getOneComment = "SELECT * FROM comments WHERE id = ?";
+
 const postComment = (req, res) => {
   const { message } = req.body;
+  console.log(message);
   const productId = parseInt(req.params.id);
   const userId = req.tokenUserId;
   dbConnection
     .query(postOneComment, [message, new Date(), new Date(), userId, productId])
     .then(([result]) => {
       if (result.insertId != null) {
-        res.location(`/${result.insertId}`).sendStatus(201);
+        res.status(201).json({ message: "Comment posted!" });
       } else {
-        res.status(404).send("Not found");
+        res.status(404).json({ error: "Not found" });
       }
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send(`Error retrieving data from database - ${err}`);
+      res
+        .status(500)
+        .json({ error: `Error retrieving data from database - ${err}` });
     });
 };
 const getAllByProduct = (req, res) => {
@@ -51,7 +55,7 @@ const deleteComment = (req, res) => {
               .query(deleteOne, [commentId])
               .then(([result]) => {
                 if (result.affectedRows === 0) {
-                  res.status(404).send("Not Found");
+                  res.status(404).json({ error: `"Not Found`});
                 } else {
                   res.status(202).json({ message: `Comment deleted` });
                 }
