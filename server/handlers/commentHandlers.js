@@ -3,7 +3,7 @@ const selectUserById = "SELECT * FROM users WHERE id = ?";
 const postOneComment =
   "INSERT INTO comments (message, created_at, updated_at, user_id, product_id) VALUES(?, ?, ?, ?, ?)";
 const getAll =
-  "SELECT c.message, c.created_at, u.id as user_id, u.first_name, u.avatar FROM users u INNER JOIN comments c ON c.user_id=u.id WHERE c.product_id = ?";
+  "SELECT c.id, c.message, c.created_at, u.id as user_id, u.first_name, u.avatar FROM users u INNER JOIN comments c ON c.user_id=u.id WHERE c.product_id = ? ORDER BY c.created_at DESC ";
 const deleteOne = "DELETE from comments WHERE id = ?";
 const getOneComment = "SELECT * FROM comments WHERE id = ?";
 

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ClearIcon from "@mui/icons-material/Clear";
 import EditIcon from "@mui/icons-material/Edit";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 import Carousel from "react-material-ui-carousel";
 
@@ -21,8 +22,10 @@ function Product() {
   const user = useSelector((state) => state.user.user);
   const productId = useParams().id;
   const [product, setProduct] = useState(null);
+  const [comments, setComments] = useState(null);
   const [loading, setLoading] = useState(false);
   const [comment, setComment] = useState("");
+  const navigate = useNavigate();
   const getProduct = async () => {
     console.log(user);
     setLoading(true);
@@ -36,8 +39,25 @@ function Product() {
       // setProduct((prevState) => {
       //   return { ...prevState, ...productJSON };
       // });
-      setProduct(productJSON);
       console.log(productJSON);
+      setProduct(productJSON);
+
+      setLoading(false);
+    } else {
+      const error = await sendRequest.json();
+      notify(error.error, "error");
+    }
+  };
+  const getComments = async () => {
+    console.log(user);
+    setLoading(true);
+    const sendRequest = await fetch(`/api/products/${productId}/comments`, {
+      method: "GET",
+    });
+    if (sendRequest.status === 200) {
+      const commentsJSON = await sendRequest.json();
+      console.log(commentsJSON);
+      setComments(commentsJSON);
       setLoading(false);
     } else {
       const error = await sendRequest.json();
@@ -46,10 +66,13 @@ function Product() {
   };
   useEffect(() => {
     getProduct();
+    getComments();
   }, []);
   const handleDeleteComment = (id) => {
     console.log(id);
     //TOTO are u sure to delete???
+    // const choice = window.confirm("Are you sure you want to delete this post?");
+    // if (!choice) return;
     const deleteComment = () => {
       fetch(`/api/products/${productId}/comments/${id}`, {
         method: "DELETE",
@@ -62,7 +85,7 @@ function Product() {
           console.log(data);
           if (data.status === 202) {
             // notify(data.message, "success");
-            getProduct();
+            getComments();
           } else if (data.status === 404) {
             notify(data.error, "error");
           } else {
@@ -96,7 +119,7 @@ function Product() {
           console.log(data);
           if (data.status === 201) {
             // notify(data.message, "success");
-            getProduct();
+            getComments();
           } else if (data.status === 404) {
             notify(data.error, "error");
           } else {
@@ -115,30 +138,40 @@ function Product() {
     <div style={{ width: "80%", margin: "0 auto" }}>
       {!loading && (
         <ProductPageWrapper>
-          <Paper
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              margin: "20px 0px",
-            }}
-          >
-            <ProductImage src={product ? product.product.link : ""} alt="" />
-            {/* <Carousel style={{ width: "100%" }}>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <ArrowBackIosNewIcon
+              style={{ color: "lightgrey", margin: "1rem", cursor: "pointer" }}
+              onClick={() => {
+                navigate(-1);
+              }}
+            />
+            <Paper
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                margin: "20px 0px",
+              }}
+            >
+              <ProductImage src={product ? product.product.link : ""} alt="" />
+              {/* <Carousel style={{ width: "100%" }}>
               <ProductImage
                 src={product ? product.product.link : ""}
                 alt="ssdwdfhnxdfg fdxyhbdxs"
               />
             </Carousel> */}
-            <ProductInfo style={{ width: "60%" }}>
-              <h2>{product ? product.product.name : ""}</h2>
-              <p>{product ? product.product.description : ""}</p>
-              <p>
-                {product ? `${(product.product.price * 0.01).toFixed(2)}€` : ""}
-              </p>
+              <ProductInfo style={{ width: "60%" }}>
+                <h2>{product ? product.product.name : ""}</h2>
+                <p>{product ? product.product.description : ""}</p>
+                <p>
+                  {product
+                    ? `${(product.product.price * 0.01).toFixed(2)}€`
+                    : ""}
+                </p>
 
-              <Button className="CheckButton">Acheter</Button>
-            </ProductInfo>
-          </Paper>
+                <Button className="CheckButton">Acheter</Button>
+              </ProductInfo>
+            </Paper>
+          </div>
           <div style={{ display: "flex", flexDirection: "row" }}>
             <CommentsSection>
               {user && (
@@ -176,10 +209,9 @@ function Product() {
                 </FormControl>
               )}
 
-              {product &&
-                product.productComments &&
-                product.productComments.map((comment) => (
-                  <CommentWrapper>
+              {comments &&
+                comments.map((comment) => (
+                  <CommentWrapper key={`comment-${comment.id}-${productId}`}>
                     <Paper
                       style={{
                         width: "90%",
@@ -189,7 +221,6 @@ function Product() {
                         marginTop: "10px",
                         padding: "10px",
                       }}
-                      key={`comment-${comment.id}-${productId}`}
                     >
                       <CommentMsg>{comment.message}</CommentMsg>
 
@@ -233,7 +264,9 @@ function Product() {
                   </CommentWrapper>
                 ))}
             </CommentsSection>
-            <Paper style={{width:'30%', marginLeft:'1rem', padding:'1rem'}}>You could like </Paper>
+            <Paper
+              style={{ width: "30%", marginLeft: "1rem", padding: "1rem" }}
+            ></Paper>
           </div>
         </ProductPageWrapper>
       )}

@@ -29,6 +29,7 @@ app.delete("/delete", faker.deleteAll)
 //routes publiques
 app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products/:id", productHandlers.getProductById);
+app.get("/api/products/:id/comments", commentHandlers.getAllByProduct);
 app.post("/api/signup",upload.single('avatar'), isUser, hashPassword,  userHandlers.postUser);
 // app.post("/api/signup", upload.single('avatar'), userHandlers.postUser);
 app.get("/api/validate/:token", userHandlers.validateUserAndRedirect);

@@ -10,6 +10,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link, useNavigate } from "react-router-dom";
@@ -61,6 +62,7 @@ function NavigationBar({ setModalOpen }) {
     handleCloseNavMenu();
     handleCloseUserMenu();
   };
+  const openAddProductModal = () => {console.log('open product modal')};
 
   return (
     <AppBar position="static">
@@ -183,17 +185,42 @@ function NavigationBar({ setModalOpen }) {
               )}
             </Box>
 
-            <Box sx={{ flexGrow: 0 }}>
-              {user && <div>{user.first_name}</div>}
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  {user ? (
-                    <Avatar alt="user avatar" src={user.avatar} />
-                  ) : (
-                    <Avatar alt="user avatar" src="" />
-                  )}
-                </IconButton>
-              </Tooltip>
+            <Box
+              sx={{ flexGrow: 0 }}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              {user && (
+                <AddCircleIcon
+                  onClick={() => {
+                    openAddProductModal();
+                  }}
+                  style={{
+                    margin: "1rem",
+                    fontSize: "45px",
+                    cursor: "pointer",
+                  }}
+                />
+              )}
+              <div>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    {user ? (
+                      <Avatar alt="user avatar" src={user.avatar} />
+                    ) : (
+                      <Avatar alt="user avatar" src="" />
+                    )}
+                  </IconButton>
+                </Tooltip>
+                {/* {user && (
+                  <div style={{ fontSize: "14px", marginTop: "5px" }}>
+                    {user.first_name}
+                  </div>
+                )} */}
+              </div>
               <MenuList
                 sx={{ mt: "45px" }}
                 id="menu-appbar"
