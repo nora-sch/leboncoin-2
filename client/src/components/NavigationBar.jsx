@@ -14,29 +14,9 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { toast } from "react-toastify";
+import notify from "../features/notify";
 import { remove } from "../features/signInSlice";
 
-const notify = (msg, type) => {
-  switch (type) {
-    case "success":
-      toast.success(msg, {
-        position: toast.POSITION.TOP_CENTER,
-        autoClose: 3000,
-        theme: "colored",
-        className: "toast-success",
-      });
-      break;
-    case "error":
-      toast.error(msg, {
-        position: toast.POSITION.TOP_CENTER,
-        autoClose: 3000,
-        theme: "colored",
-        className: "toast-error",
-      });
-      break;
-  }
-};
 function NavigationBar({ setModalOpen }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();

@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { toast } from "react-toastify";
+import notify from "../features/notify";
 import { useSelector, useDispatch } from "react-redux";
 import { add } from "../features/signInSlice";
 import {
@@ -31,26 +31,7 @@ const textInputStyle = {
   width: "100%",
   paddingBottom: "10px",
 };
-const notify = (msg, type) => {
-  switch (type) {
-    case "success":
-      toast.success(msg, {
-        position: toast.POSITION.TOP_CENTER,
-        autoClose: 3000,
-        theme: "colored",
-        className: "toast-success",
-      });
-      break;
-    case "error":
-      toast.error(msg, {
-        position: toast.POSITION.TOP_CENTER,
-        autoClose: 3000,
-        theme: "colored",
-        className: "toast-error",
-      });
-      break;
-  }
-};
+
 function ConnectionModal({ open, setModalOpen }) {
   const [emailLogin, setEmailLogin] = useState("");
   const [passwordLogin, setPasswordLogin] = useState("");
