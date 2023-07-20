@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import notify from "../features/notify";
 
-function SignupValidated({ setModalOpen }) {
+function SignupValidated({ setSignInModalOpen }) {
   const navigate = useNavigate();
   const passToValidated = () => {
     fetch(`/api/validate/${window.location.pathname.split("/").at(-1)}`, {
@@ -15,7 +15,7 @@ function SignupValidated({ setModalOpen }) {
       .then((data) => {
         console.log(data);
         if (data.status === 200) {
-          setModalOpen(true);
+          setSignInModalOpen(true);
           notify(data.message, "success");
           navigate("/");
         } else if (data.status === 404) {

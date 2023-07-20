@@ -18,7 +18,7 @@ import { useSelector, useDispatch } from "react-redux";
 import notify from "../features/notify";
 import { remove } from "../features/signInSlice";
 
-function NavigationBar({ setModalOpen }) {
+function NavigationBar({ setSignInModalOpen, setAddProductModalOpen }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -40,8 +40,9 @@ function NavigationBar({ setModalOpen }) {
   };
   const openSignInModal = () => {
     setAnchorElUser(null);
-    setModalOpen(true);
+    setSignInModalOpen(true);
   };
+
   const logOut = () => {
     const removeToken = async () => {
       const sendLogout = await fetch("/api/logout", {
@@ -62,7 +63,9 @@ function NavigationBar({ setModalOpen }) {
     handleCloseNavMenu();
     handleCloseUserMenu();
   };
-  const openAddProductModal = () => {console.log('open product modal')};
+  const openAddProductModal = () => {
+    setAddProductModalOpen(true);
+    console.log('open product modal')};
 
   return (
     <AppBar position="static">
@@ -263,7 +266,7 @@ function NavigationBar({ setModalOpen }) {
                     <Typography
                       textAlign="center"
                       onClick={() => {
-                        setModalOpen(true);
+                        setSignInModalOpen(true);
                       }}
                     >
                       Sign In

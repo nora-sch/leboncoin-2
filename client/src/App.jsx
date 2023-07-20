@@ -10,14 +10,19 @@ import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import SignupValidated from "./pages/SignupValidated";
 import Auth from "./Auth";
+import AddProductModal from "./components/AddProductModal";
 
 function App() {
   // Modal
-  const [open, setOpen] = useState(false);
+  const [signInModalOpen, setSignInModalOpen] = useState(false);
+  const [addProductModalOpen, setAddProductModalOpen] = useState(false);
   return (
     <BrowserRouter>
       <ToastContainer />
-      <NavigationBar setModalOpen={setOpen} />
+      <NavigationBar
+        setSignInModalOpen={setSignInModalOpen}
+        setAddProductModalOpen={setAddProductModalOpen}
+      />
       <Main>
         {/* <SideBar /> */}
         <Routes>
@@ -25,7 +30,7 @@ function App() {
           <Route path="/products/:id" element={<Product />} />
           <Route
             path="/validate/:token"
-            element={<SignupValidated setModalOpen={setOpen} />}
+            element={<SignupValidated setModalOpen={setSignInModalOpen} />}
           />
           <Route
             path="/dashboard"
@@ -36,7 +41,14 @@ function App() {
             }
           />
         </Routes>
-        <ConnectionModal open={open} setModalOpen={setOpen} />
+        <ConnectionModal
+          open={signInModalOpen}
+          setModalOpen={setSignInModalOpen}
+        />
+        <AddProductModal
+          open={addProductModalOpen}
+          setModalOpen={setAddProductModalOpen}
+        />
       </Main>
     </BrowserRouter>
   );

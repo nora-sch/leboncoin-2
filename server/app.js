@@ -10,27 +10,32 @@ const productHandlers = require("./handlers/productHandlers");
 const userHandlers = require("./handlers/userHandlers");
 const commentHandlers = require("./handlers/commentHandlers");
 const faker = require("./faker/faker");
-const multer  = require('multer')
-const upload = multer({ dest: '../upload/files/temp' })
+const multer = require("multer");
+const upload = multer({ dest: "../upload/files/temp" });
 const {
   isUser,
   verifyPassword,
   verifyToken,
   hashPassword,
   getUserByEmailWithPasswordAndPassToNext,
-  isAdminOrUserWithRights,
   isAdmin,
 } = require("./auth");
 //faker
 app.get("/faker", faker.hydrate);
 //delete all
-app.delete("/delete", faker.deleteAll)
+app.delete("/delete", faker.deleteAll);
 
 //routes publiques
 app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products/:id", productHandlers.getProductById);
 app.get("/api/products/:id/comments", commentHandlers.getAllByProduct);
-app.post("/api/signup",upload.single('avatar'), isUser, hashPassword,  userHandlers.postUser);
+app.post(
+  "/api/signup",
+  upload.single("avatar"),
+  isUser,
+  hashPassword,
+  userHandlers.postUser
+);
 // app.post("/api/signup", upload.single('avatar'), userHandlers.postUser);
 app.get("/api/validate/:token", userHandlers.validateUserAndRedirect);
 
@@ -44,7 +49,11 @@ app.post(
 
 // if signed in
 app.use(verifyToken); // verifyToken sera utilisé pour tt les routes qui suivent cette ligne
-app.post("/api/products", productHandlers.postProduct);
+app.post(
+  "/api/products",
+  upload.array("images", 9),
+  productHandlers.postProduct
+);
 app.post("/api/products/:id", commentHandlers.postComment);
 app.get("/api/logout", userHandlers.logout);
 // app.put("/api/products/:id/comments/:id", commentHandlers.updateComment);
