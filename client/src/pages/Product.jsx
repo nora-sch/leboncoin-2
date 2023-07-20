@@ -242,8 +242,9 @@ function Product() {
                           }
                         />
                         <Info>
+              
                           <p>{comment.first_name ?? ""}</p>
-                          <p>{comment.created_at ?? ""}</p>
+                          <p>{comment.created_at?`${('0'+new Date(comment.created_at).getDate()).slice(-2)}/${('0'+(new Date(comment.created_at).getMonth()+1)).slice(-2)}/${new Date(comment.created_at).getFullYear()}` : ""}</p>
                         </Info>
                       </CommentInfo>
                     </Paper>
