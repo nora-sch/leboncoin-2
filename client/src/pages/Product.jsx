@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import notify from "../features/notify";
 import { styled } from "styled-components";
+import AlertDialogSlide from "../components/AlertDialogSlide";
 
 function Product() {
   const CHARACTER_LIMIT = 1000;
@@ -25,6 +26,8 @@ function Product() {
   const [comments, setComments] = useState(null);
   const [loading, setLoading] = useState(false);
   const [comment, setComment] = useState("");
+  const [commentDeleteDialog, setCommentDeleteDialog] = useState(false);
+  const [commentApprovedToDelete, setCommentApprovedToDelete] = useState(false);
   const navigate = useNavigate();
   const getProduct = async () => {
     console.log(user);
@@ -33,37 +36,16 @@ function Product() {
       method: "GET",
     });
     if (sendRequest.status === 200) {
-      //TODO - refetch to display new comments ( and after deleting too)
-      // setProduct(null);
       const productJSON = await sendRequest.json();
-      // setProduct((prevState) => {
-      //   return { ...prevState, ...productJSON };
-      // });
       console.log(productJSON);
       setProduct(productJSON);
-
       setLoading(false);
     } else {
       const error = await sendRequest.json();
       notify(error.error, "error");
     }
   };
-  // const getComments = async () => {
-  //   console.log(user);
-  //   setLoading(true);
-  //   const sendRequest = await fetch(`/api/products/${productId}/comments`, {
-  //     method: "GET",
-  //   });
-  //   if (sendRequest.status === 200) {
-  //     const commentsJSON = await sendRequest.json();
-  //     console.log(commentsJSON);
-  //     setComments(commentsJSON);
-  //     setLoading(false);
-  //   } else {
-  //     const error = await sendRequest.json();
-  //     notify(error.error, "error");
-  //   }
-  // };
+
   const getComments = async () => {
     console.log(user);
     fetch(`/api/products/${productId}/comments`, {
@@ -87,10 +69,7 @@ function Product() {
     getComments();
   }, []);
   const handleDeleteComment = (id) => {
-    console.log(id);
-    //TODO are u sure to delete???
-    // const choice = window.confirm("Are you sure you want to delete this post?");
-    // if (!choice) return;
+    setCommentDeleteDialog(true);
     const deleteComment = () => {
       fetch(`/api/products/${productId}/comments/${id}`, {
         method: "DELETE",
@@ -109,8 +88,11 @@ function Product() {
           notify(`${error.message}`, "error");
         });
     };
-
-    deleteComment();
+    if (commentApprovedToDelete) {
+      console.log("delete");
+      deleteComment();
+      setCommentApprovedToDelete(false);
+    }
   };
   const onCommentSubmit = (e) => {
     e.preventDefault();
@@ -146,6 +128,15 @@ function Product() {
 
   return (
     <div style={{ width: "80%", margin: "0 auto" }}>
+      {commentDeleteDialog && (
+        <AlertDialogSlide
+          message={"Are you sure you want to delete this comment?"}
+          submitText={"DELETE"}
+          open={commentDeleteDialog}
+          setOpen={setCommentDeleteDialog}
+          setApprovedToDelete={setCommentApprovedToDelete}
+        />
+      )}
       {!loading && (
         <ProductPageWrapper>
           <div style={{ display: "flex", flexDirection: "row" }}>
@@ -242,9 +233,19 @@ function Product() {
                           }
                         />
                         <Info>
-              
                           <p>{comment.first_name ?? ""}</p>
-                          <p>{comment.created_at?`${('0'+new Date(comment.created_at).getDate()).slice(-2)}/${('0'+(new Date(comment.created_at).getMonth()+1)).slice(-2)}/${new Date(comment.created_at).getFullYear()}` : ""}</p>
+                          <p>
+                            {comment.created_at
+                              ? `${(
+                                  "0" + new Date(comment.created_at).getDate()
+                                ).slice(-2)}/${(
+                                  "0" +
+                                  (new Date(comment.created_at).getMonth() + 1)
+                                ).slice(-2)}/${new Date(
+                                  comment.created_at
+                                ).getFullYear()}`
+                              : ""}
+                          </p>
                         </Info>
                       </CommentInfo>
                     </Paper>
