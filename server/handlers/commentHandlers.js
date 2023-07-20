@@ -16,7 +16,7 @@ const postComment = (req, res) => {
     .query(postOneComment, [message, new Date(), new Date(), userId, productId])
     .then(([result]) => {
       if (result.insertId != null) {
-        res.status(201).json({ message: "Comment posted!" });
+        res.status(201).json({ status:201,message: "Comment posted!" });
       } else {
         res.status(404).json({ error: "Not found" });
       }
@@ -32,7 +32,7 @@ const getAllByProduct = (req, res) => {
   dbConnection
     .query(getAll, [parseInt(req.params.id)])
     .then(([comments]) => {
-      res.json(comments);
+      res.json({status:201, comments});
     })
     .catch((err) => {
       console.error(err);
@@ -57,7 +57,7 @@ const deleteComment = (req, res) => {
                 if (result.affectedRows === 0) {
                   res.status(404).json({ error: `"Not Found`});
                 } else {
-                  res.status(202).json({ message: `Comment deleted` });
+                  res.status(202).json({ status:202, message: `Comment deleted` });
                 }
               })
               .catch((err) => {

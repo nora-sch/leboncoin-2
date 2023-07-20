@@ -48,29 +48,47 @@ function Product() {
       notify(error.error, "error");
     }
   };
+  // const getComments = async () => {
+  //   console.log(user);
+  //   setLoading(true);
+  //   const sendRequest = await fetch(`/api/products/${productId}/comments`, {
+  //     method: "GET",
+  //   });
+  //   if (sendRequest.status === 200) {
+  //     const commentsJSON = await sendRequest.json();
+  //     console.log(commentsJSON);
+  //     setComments(commentsJSON);
+  //     setLoading(false);
+  //   } else {
+  //     const error = await sendRequest.json();
+  //     notify(error.error, "error");
+  //   }
+  // };
   const getComments = async () => {
     console.log(user);
-    setLoading(true);
-    const sendRequest = await fetch(`/api/products/${productId}/comments`, {
+    fetch(`/api/products/${productId}/comments`, {
       method: "GET",
-    });
-    if (sendRequest.status === 200) {
-      const commentsJSON = await sendRequest.json();
-      console.log(commentsJSON);
-      setComments(commentsJSON);
-      setLoading(false);
-    } else {
-      const error = await sendRequest.json();
-      notify(error.error, "error");
-    }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.status);
+        if (data.status === 201) {
+          setComments(data.comments);
+          setLoading(false);
+        } else {
+          const error = data.error;
+          notify(error.error, "error");
+        }
+      });
   };
+
   useEffect(() => {
     getProduct();
     getComments();
   }, []);
   const handleDeleteComment = (id) => {
     console.log(id);
-    //TOTO are u sure to delete???
+    //TODO are u sure to delete???
     // const choice = window.confirm("Are you sure you want to delete this post?");
     // if (!choice) return;
     const deleteComment = () => {
@@ -82,21 +100,16 @@ function Product() {
           return response.json();
         })
         .then((data) => {
-          console.log(data);
+          console.log(data.status);
           if (data.status === 202) {
-            // notify(data.message, "success");
             getComments();
-          } else if (data.status === 404) {
-            notify(data.error, "error");
-          } else {
-            notify(data.error, "error");
           }
         })
         .catch((error) => {
           notify(`${error.message}`, "error");
         });
     };
-    // });
+
     deleteComment();
   };
   const onCommentSubmit = (e) => {
@@ -118,10 +131,7 @@ function Product() {
         .then((data) => {
           console.log(data);
           if (data.status === 201) {
-            // notify(data.message, "success");
             getComments();
-          } else if (data.status === 404) {
-            notify(data.error, "error");
           } else {
             notify(data.error, "error");
           }
