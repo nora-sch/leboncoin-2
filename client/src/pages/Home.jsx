@@ -6,18 +6,23 @@ import notify from "../features/notify";
 function Home() {
   const [products, setProducts] = useState([]);
   useEffect(() => {
+    const controller = new AbortController()
+      const index = controller.index
     const getProducts = async () => {
-      const sendRequest = await fetch("/api/products", { method: "GET" });
+      
+      const sendRequest = await fetch("/api/products", {index}, { method: "GET" });
       // console.log(sendRequest);
       if (sendRequest.status === 200) {
         const productsJSON = await sendRequest.json();
         setProducts(productsJSON);
+        console.log(productsJSON);
       } else {
         // const error = await sendRequest.json();
         // notify(error.error, "error");
       }
     };
     getProducts();
+    return () => controller.abort()
   }, []);
   // console.log(products);
   return (

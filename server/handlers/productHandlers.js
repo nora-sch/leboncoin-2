@@ -6,11 +6,11 @@ const multer = require("multer");
 const upload = multer({ dest: "../upload/files/temp" });
 const postOne =
   "INSERT INTO products (name, description, price, created_at, updated_at, user_id) VALUES(?, ?, ?, ?, ?, ?)";
-const addImage = "INSERT INTO product_images (product_id, link) VALUES (?,?)";
+const addImage =
+  "INSERT INTO product_images (product_id, link, sequence_index) VALUES (?,?,?)";
 const getAll =
-  "SELECT p.*, pi.id as image_id, pi.link, u.first_name, u.last_name, u.avatar FROM products AS p LEFT JOIN product_images AS pi ON pi.product_id=p.id INNER JOIN users AS u ON p.user_id=u.id";
-const findById =
-  "SELECT p.*, pi.id as image_id, pi.link FROM products p LEFT JOIN product_images pi ON pi.product_id=p.id WHERE p.id = ?";
+  "SELECT p.*,  pi.link, u.first_name, u.last_name, u.avatar FROM products AS p INNER JOIN product_images as pi ON pi.product_id = p.id INNER JOIN users AS u ON p.user_id=u.id WHERE pi.sequence_index = ? ORDER BY created_at DESC";
+const findById = "SELECT p.* FROM products AS p WHERE p.id = ?";
 
 const deleteOne = "DELETE from products WHERE id = ?";
 const getCommentsByProduct =
@@ -19,7 +19,10 @@ const deleteImage = "DELETE from product_images WHERE id=?";
 const selectUserById = "SELECT * FROM users WHERE id = ?";
 const findImageById =
   "SELECT u.id from users as u INNER JOIN products as p ON p.user_id = u.id INNER JOIN product_images as i ON i.product_id = p.id WHERE i.id = ?";
-const imageLinks = [];
+const findImagesByProductId =
+  "SELECT * from product_images where product_id=? ORDER BY sequence_index ASC";
+const findMainImageByProductId =
+  "SELECT * from product_images WHERE product_id=? AND sequence_index=?";
 const postProduct = async (req, res) => {
   //   {
   //     "name": "SAMSUNG X-6",
@@ -29,22 +32,7 @@ const postProduct = async (req, res) => {
   //   }   FOR POSTMAN
   const { name, description, price } = req.body;
   const images = req.files;
-
-  // images.map((image) =>
-  //   cloudinary.v2.uploader
-  //     .upload(
-  //       image.path,
-  //       { public_id: image.filename, folder: "Leboncoin" },
-  //       function (error, result) {
-  //         // console.log(result);
-  //       }
-  //     )
-  //     .then((data) => {
-  //       imageLinks.push(data.url);
-  //       console.log(imageLinks);
-  //     })
-  // );
-
+  console.log(images);
   dbConnection
     .query(postOne, [
       name,
@@ -57,29 +45,28 @@ const postProduct = async (req, res) => {
     .then(([result]) => {
       if (result.insertId != null) {
         console.log(result.insertId);
-        images.map((image) =>
+        images.map((image, key) =>
           cloudinary.v2.uploader
             .upload(
               image.path,
               { public_id: image.filename, folder: "Leboncoin" },
               function (error, result) {
-                console.log(images);
                 console.log(image);
-                console.log(result);
+                // console.log(result);
                 // //delete image from temp folder
                 fs.unlink(image.path, (err) => console.log(err));
               }
             )
             .then((data) => {
               dbConnection
-                .query(addImage, [result.insertId, data.url])
+                .query(addImage, [result.insertId, data.url, key])
                 .then(([result2]) => {
                   console.log(result2);
                   if (result2.insertId != null) {
                     // res.status(201).json({
+                    //   // Cannot set headers after they are sent to the client
                     //   status: 201,
-                    //   message:
-                    //     "Image uploaded",
+                    //   message: "Image uploaded",
                     // });
                   }
                 })
@@ -87,7 +74,8 @@ const postProduct = async (req, res) => {
                   console.error(err);
                   res
                     .status(500)
-                    .send(`Error retrieving data from database - ${err}`);
+                    .send(`Error retrieving data from database - ${err}`); // Cannot set headers after they are sent to the client
+                  return;
                 });
             })
             .catch((err) => {
@@ -98,34 +86,12 @@ const postProduct = async (req, res) => {
             })
         ); // end map
       }
-      //   console.log(imageLinks.length);
-      //   if (imageLinks.length > 0) {
-      //     imageLinks.forEach((img) =>
-      //       dbConnection
-      //         .query(addImage, [result.insertId, img])
-      //         .then(([result2]) => {
-      //           console.log(result2);
-      //           if (result2.insertId != null) {
-      //             //delete image from temp folder
-      //             fs.unlink(img.path, (err) => console.log(err));
-      //             res.status(201).json({
-      //               status: 201,
-      //               message:
-      //                 "You have been signed up - check your email and click on the link to validate your account!",
-      //             });
-      //           }
-      //         })
-      //         .catch((err) => {
-      //           console.error(err);
-      //           res
-      //             .status(500)
-      //             .send(`Error retrieving data from database - ${err}`);
-      //         })
-      //     );
-      //   }
-      // } else {
-      //   res.status(404).send("Not Found");
-      // }
+      res.status(201).json({
+        // Cannot set headers after they are sent to the client
+        status: 201,
+        message: "Product added",
+        productId: result.insertId,
+      });
     })
     .catch((err) => {
       console.error(err);
@@ -135,8 +101,9 @@ const postProduct = async (req, res) => {
 
 const getAllProducts = (req, res) => {
   dbConnection
-    .query(getAll)
+    .query(getAll, [0])
     .then(([products]) => {
+      // console.log(products);
       res.json(products);
     })
     .catch((err) => {
@@ -152,21 +119,22 @@ const getProductById = (req, res) => {
       console.log(products);
       if (products[0] != null) {
         const product = products[0];
-        let productComments = {};
-        dbConnection
-          .query(getCommentsByProduct, [parseInt(req.params.id)])
-          .then(([comments]) => {
-            if (comments[0] != null) {
-              productComments = comments;
-            }
-            res.json({ product, productComments });
-          })
-          .catch((err) => {
-            console.error(err);
-            res.status(500).send("Error retrieving data from database");
-          });
-      } else {
-        res.status(404).send("Not Found");
+        res.json({ status: 201, product });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
+const getImagesByProduct = (req, res) => {
+  dbConnection
+    .query(findImagesByProductId, [parseInt(req.params.id)])
+    .then(([response]) => {
+      console.log(response);
+      if (response != null) {
+        const images = response;
+        res.json({ status: 201, images });
       }
     })
     .catch((err) => {
@@ -267,4 +235,5 @@ module.exports = {
   getProductById,
   deleteProduct,
   deleteOneImage,
+  getImagesByProduct,
 };

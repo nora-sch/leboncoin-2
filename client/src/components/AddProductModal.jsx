@@ -15,6 +15,7 @@ import {
   Input,
   InputLabel,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const modalStyle = {
   position: "absolute",
@@ -40,7 +41,7 @@ function AddProductModal({ open, setModalOpen }) {
   const dispatch = useDispatch();
   const handleOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
-
+  const navigate = useNavigate();
   const postNewProduct = (e) => {
     e.preventDefault();
     console.log(images);
@@ -67,6 +68,9 @@ function AddProductModal({ open, setModalOpen }) {
           if (data.status === 201) {
             setModalOpen(false);
             notify(data.message, "success");
+            // navigate(`/products/${data.productId}`);
+            navigate(`/`);
+         
           } else if (data.status === 404) {
             notify(data.error, "error");
           } else {

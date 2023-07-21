@@ -24,6 +24,7 @@ function Product() {
   const productId = useParams().id;
   const [product, setProduct] = useState(null);
   const [comments, setComments] = useState(null);
+  const [images, setImages] = useState(null);
   const [loading, setLoading] = useState(false);
   const [comment, setComment] = useState("");
   const [commentDeleteDialog, setCommentDeleteDialog] = useState(false);
@@ -63,9 +64,26 @@ function Product() {
         }
       });
   };
+  const getImages = async () => {
+    console.log(user);
+    fetch(`/api/products/${productId}/images`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.status === 201) {
+          setImages(data.images);
+        } else {
+          const error = data.error;
+          notify(error.error, "error");
+        }
+      });
+  };
 
   useEffect(() => {
     getProduct();
+    getImages();
     getComments();
   }, []);
   const handleDeleteComment = (id) => {
@@ -143,7 +161,8 @@ function Product() {
             <ArrowBackIosNewIcon
               style={{ color: "lightgrey", margin: "1rem", cursor: "pointer" }}
               onClick={() => {
-                navigate(-1);
+                // navigate(-1);
+                navigate('/');
               }}
             />
             <Paper
@@ -153,7 +172,7 @@ function Product() {
                 margin: "20px 0px",
               }}
             >
-              <ProductImage src={product ? product.product.link : ""} alt="" />
+              <ProductImage src={images&&images.length>0 ? images[0].link : ""} alt="" />
               {/* <Carousel style={{ width: "100%" }}>
               <ProductImage
                 src={product ? product.product.link : ""}

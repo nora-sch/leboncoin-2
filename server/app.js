@@ -29,6 +29,7 @@ app.delete("/delete", faker.deleteAll);
 app.get("/api/products", productHandlers.getAllProducts);
 app.get("/api/products/:id", productHandlers.getProductById);
 app.get("/api/products/:id/comments", commentHandlers.getAllByProduct);
+app.get("/api/products/:id/images", productHandlers.getImagesByProduct);
 app.post(
   "/api/signup",
   upload.single("avatar"),
