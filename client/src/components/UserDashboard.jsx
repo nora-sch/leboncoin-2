@@ -46,7 +46,7 @@ function createData(
     actions,
   };
 }
-const rows = [];
+// const rows = [];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -259,6 +259,7 @@ export default function EnhancedTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [users, setUsers] = React.useState();
+  const [rows, setRows] = React.useState([]);
 
   React.useEffect(() => {
     const getUsers = async () => {
@@ -266,22 +267,22 @@ export default function EnhancedTable() {
       // console.log(sendRequest);
       if (sendRequest.status === 200) {
         const usersJSON = await sendRequest.json();
-        await usersJSON.map((user, key) => {
-          rows[key] = createData(
-            user.id,
-            user.first_name,
-            user.last_name,
-            user.email,
-            user.is_admin,
-            user.created_at,
-            user.updated_at,
-            user.id
-          );
-        });
+        // await usersJSON.map((user, key) => {
+        //   rows[key] = createData(
+        //     user.id,
+        //     user.first_name,
+        //     user.last_name,
+        //     user.email,
+        //     user.is_admin,
+        //     user.created_at,
+        //     user.updated_at,
+        //     user.id
+        //   );
+        // });
         console.log(usersJSON);
         console.log(rows);
         // setUsers(usersJSON);
-        setUsers({ rows });
+        setUsers(usersJSON);
         console.log(users);
       } else {
         const error = await sendRequest.json();
@@ -290,6 +291,28 @@ export default function EnhancedTable() {
     };
     getUsers();
   }, []);
+
+  React.useEffect(() => {
+    console.log("are users undefined?");
+    if (users !== undefined) {
+      console.log(users);
+      users.map((user, key) => {
+        rows[key] = createData(
+          user.id,
+          user.first_name,
+          user.last_name,
+          user.email,
+          user.is_admin,
+          user.created_at,
+          user.updated_at,
+          user.id
+        );
+      });
+      setRows(rows);
+      console.log(rows);
+    }
+  }, [users]);
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -410,29 +433,19 @@ export default function EnhancedTable() {
                       console.log(userJSON);
                       console.log(row.id);
                       let rowKey = rows.map((item) => item.id).indexOf(row.id);
-                      console.log(rows.indexOf(row.id));
                       console.log(rowKey);
                       console.log(rows);
                       console.log(users);
-                      let updatedUsers = { ...users };
+                      let updatedUsers = [...users];
                       console.log(updatedUsers);
                       // 2. Make a shallow copy of the item you want to mutate
-                      let userTarget = { ...updatedUsers.rows[rowKey] };
-                      console.log(userTarget);
+                      let userTarget = { ...updatedUsers[rowKey] };
+                      userTarget = userJSON.user[0];
                       // 3. Replace the property you're intested in
-                      userTarget = createData(
-                        userJSON.user.id,
-                        userJSON.user.first_name,
-                        userJSON.user.last_name,
-                        userJSON.user.email,
-                        userJSON.user.is_admin,
-                        userJSON.user.created_at,
-                        userJSON.user.updated_at,
-                        userJSON.user.id
-                      );
                       // 4. Put it back into our array. N.B. we *are* mutating the array here,
                       //    but that's why we made a copy first
-                      updatedUsers.rows[rowKey] = userTarget;
+                      updatedUsers[rowKey] = userTarget;
+                      console.log(updatedUsers);
                       // 5. Set the state to our new copy
                       setUsers(updatedUsers);
                       // console.log(rows);
