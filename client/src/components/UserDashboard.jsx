@@ -1,27 +1,29 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import { visuallyHidden } from '@mui/utils';
-import notify from '../features/notify';
+import * as React from "react";
+import PropTypes from "prop-types";
+import { alpha } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import Checkbox from "@mui/material/Checkbox";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import { visuallyHidden } from "@mui/utils";
+import notify from "../features/notify";
+import { Button } from "@mui/material";
+import SwitchBase from "@mui/material/internal/SwitchBase";
 
 function createData(
   id,
@@ -41,25 +43,10 @@ function createData(
     isAdmin,
     createdAt,
     updatedAt,
-    actions
+    actions,
   };
 }
-const rows=[];
-// const rows = [
-//   createData('Cupcake', 305, 3.7, 67, 4.3),
-//   createData('Donut', 452, 25.0, 51, 4.9),
-//   createData('Eclair', 262, 16.0, 24, 6.0),
-//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//   createData('Gingerbread', 356, 16.0, 49, 3.9),
-//   createData('Honeycomb', 408, 3.2, 87, 6.5),
-//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//   createData('Jelly Bean', 375, 0.0, 94, 0.0),
-//   createData('KitKat', 518, 26.0, 65, 7.0),
-//   createData('Lollipop', 392, 0.2, 98, 0.0),
-//   createData('Marshmallow', 318, 0, 81, 2.0),
-//   createData('Nougat', 360, 19.0, 9, 37.0),
-//   createData('Oreo', 437, 18.0, 63, 4.0),
-// ];
+const rows = [];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -72,7 +59,7 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === 'desc'
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -141,12 +128,18 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "Actions",
-  }
+  },
 ];
 
 function EnhancedTableHead(props) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-    props;
+  const {
+    onSelectAllClick,
+    order,
+    orderBy,
+    numSelected,
+    rowCount,
+    onRequestSort,
+  } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -161,26 +154,26 @@ function EnhancedTableHead(props) {
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
-              'aria-label': 'select all desserts',
+              "aria-label": "select all users",
             }}
           />
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            align={headCell.numeric ? "right" : "left"}
+            padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
+              direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -195,7 +188,7 @@ EnhancedTableHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
 };
@@ -210,13 +203,16 @@ function EnhancedTableToolbar(props) {
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+            alpha(
+              theme.palette.primary.main,
+              theme.palette.action.activatedOpacity
+            ),
         }),
       }}
     >
       {numSelected > 0 ? (
         <Typography
-          sx={{ flex: '1 1 100%' }}
+          sx={{ flex: "1 1 100%" }}
           color="inherit"
           variant="subtitle1"
           component="div"
@@ -225,12 +221,12 @@ function EnhancedTableToolbar(props) {
         </Typography>
       ) : (
         <Typography
-          sx={{ flex: '1 1 100%' }}
+          sx={{ flex: "1 1 100%" }}
           variant="h6"
           id="tableTitle"
           component="div"
         >
-          Nutrition
+          Users
         </Typography>
       )}
 
@@ -256,13 +252,13 @@ EnhancedTableToolbar.propTypes = {
 };
 
 export default function EnhancedTable() {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [users, setUsers]=React.useState([]);
+  const [users, setUsers] = React.useState();
 
   React.useEffect(() => {
     const getUsers = async () => {
@@ -281,12 +277,11 @@ export default function EnhancedTable() {
             user.updated_at,
             user.id
           );
-        
         });
         console.log(usersJSON);
         console.log(rows);
         // setUsers(usersJSON);
-        setUsers({...users, rows})
+        setUsers({ rows });
         console.log(users);
       } else {
         const error = await sendRequest.json();
@@ -296,14 +291,14 @@ export default function EnhancedTable() {
     getUsers();
   }, []);
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.name);
+      const newSelected = rows.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -311,9 +306,11 @@ export default function EnhancedTable() {
   };
 
   const handleClick = (event, name) => {
+    // console.log(name);
     const selectedIndex = selected.indexOf(name);
+    // console.log(selectedIndex);
     let newSelected = [];
-
+    //TODO verify and repare
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
     } else if (selectedIndex === 0) {
@@ -323,7 +320,7 @@ export default function EnhancedTable() {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
+        selected.slice(selectedIndex + 1)
       );
     }
 
@@ -343,7 +340,7 @@ export default function EnhancedTable() {
     setDense(event.target.checked);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const isSelected = (name) => selected.indexOf(name) !== -1; //TODO verify
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -353,20 +350,20 @@ export default function EnhancedTable() {
     () =>
       stableSort(rows, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage,
+        page * rowsPerPage + rowsPerPage
       ),
-    [order, orderBy, page, rowsPerPage],
+    [order, orderBy, page, rowsPerPage]
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box sx={{ width: "100%" }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size={dense ? "small" : "medium"}
           >
             <EnhancedTableHead
               numSelected={selected.length}
@@ -378,8 +375,74 @@ export default function EnhancedTable() {
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.name);
+                const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
+                const modifyDateFormat = (dateSQL) => {
+                  return `${("0" + new Date(dateSQL).getDate()).slice(-2)}/${(
+                    "0" +
+                    (new Date(dateSQL).getMonth() + 1)
+                  ).slice(-2)}/${new Date(dateSQL).getFullYear()}`;
+                };
+                const changeAdmin = () => {
+                  console.log(row.isAdmin);
+                  const selectedIndex = selected.indexOf(row.id);
+                  console.log(selectedIndex);
+                  const changeAdminStatus = async () => {
+                    const sendRequest = await fetch(
+                      `/api/users/${row.id}/change-admin-status`,
+                      { method: "PUT" }
+                    );
+                    // console.log(sendRequest);
+                    if (sendRequest.status === 200) {
+                      const userJSON = await sendRequest.json();
+                      // await usersJSON.map((user, key) => {
+                      //   rows[key] = createData(
+                      //     user.id,
+                      //     user.first_name,
+                      //     user.last_name,
+                      //     user.email,
+                      //     user.is_admin,
+                      //     user.created_at,
+                      //     user.updated_at,
+                      //     user.id
+                      //   );
+                      // });
+                      console.log(userJSON);
+                      console.log(row.id);
+                      let rowKey = rows.map((item) => item.id).indexOf(row.id);
+                      console.log(rows.indexOf(row.id));
+                      console.log(rowKey);
+                      console.log(rows);
+                      console.log(users);
+                      let updatedUsers = { ...users };
+                      console.log(updatedUsers);
+                      // 2. Make a shallow copy of the item you want to mutate
+                      let userTarget = { ...updatedUsers.rows[rowKey] };
+                      console.log(userTarget);
+                      // 3. Replace the property you're intested in
+                      userTarget = createData(
+                        userJSON.user.id,
+                        userJSON.user.first_name,
+                        userJSON.user.last_name,
+                        userJSON.user.email,
+                        userJSON.user.is_admin,
+                        userJSON.user.created_at,
+                        userJSON.user.updated_at,
+                        userJSON.user.id
+                      );
+                      // 4. Put it back into our array. N.B. we *are* mutating the array here,
+                      //    but that's why we made a copy first
+                      updatedUsers.rows[rowKey] = userTarget;
+                      // 5. Set the state to our new copy
+                      setUsers(updatedUsers);
+                      // console.log(rows);
+                      // setUsers(usersJSON);
+                      // setUsers({ ...users, rows });
+                      console.log(users);
+                    }
+                  };
+                  changeAdminStatus();
+                };
 
                 return (
                   <TableRow
@@ -390,14 +453,14 @@ export default function EnhancedTable() {
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
+                    sx={{ cursor: "pointer" }}
                   >
                     <TableCell padding="checkbox">
                       <Checkbox
                         color="primary"
                         checked={isItemSelected}
                         inputProps={{
-                          'aria-labelledby': labelId,
+                          "aria-labelledby": labelId,
                         }}
                       />
                     </TableCell>
@@ -412,10 +475,44 @@ export default function EnhancedTable() {
                     <TableCell align="right">{row.firstName}</TableCell>
                     <TableCell align="right">{row.lastName}</TableCell>
                     <TableCell align="right">{row.email}</TableCell>
-                    <TableCell align="right">{row.isAdmin}</TableCell>
-                    <TableCell align="right">{row.createdAt}</TableCell>
-                    <TableCell align="right">{row.updatedAt}</TableCell>
-                    <TableCell align="right">{row.actions}</TableCell>
+                    <TableCell align="right">
+                      {row.isAdmin}{" "}
+                      <Switch
+                        checked={row.isAdmin === 0 ? false : true}
+                        onChange={() => {
+                          changeAdmin();
+                        }}
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      {modifyDateFormat(row.createdAt)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {modifyDateFormat(row.updatedAt)}
+                    </TableCell>
+                    <TableCell align="right">
+                      <Button
+                        onClick={(e) => {
+                          console.log(row.id);
+                        }}
+                        color="success"
+                        variant="contained"
+                        size="small"
+                      >
+                        {row.actions} Edit{" "}
+                      </Button>
+                      <Button
+                        onClick={(e) => {
+                          console.log(row.id);
+                        }}
+                        color="error"
+                        variant="contained"
+                        size="small"
+                      >
+                        {row.actions} Delete
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 );
               })}

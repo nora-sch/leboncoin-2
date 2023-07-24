@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 import Home from "./pages/Home";
 import Product from "./pages/Product";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./components/UserDashboard";
 import NavigationBar from "./components/NavigationBar";
 import "./App.css";
 import ConnectionModal from "./components/ConnectionModal";

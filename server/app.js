@@ -19,6 +19,7 @@ const {
   hashPassword,
   getUserByEmailWithPasswordAndPassToNext,
   isAdmin,
+  changeAdminStatus
 } = require("./auth");
 //faker
 app.get("/faker", faker.hydrate);
@@ -67,6 +68,7 @@ app.delete("/api/products/:id/comments/:id", commentHandlers.deleteComment); //o
 // only admin
 app.get("/api/products/:id/comments", isAdmin, commentHandlers.getAllByProduct);
 app.get("/api/users", isAdmin, userHandlers.getAllUsers);
+app.put("/api/users/:id/change-admin-status", isAdmin, userHandlers.changeAdminStatus);
 
 // app.get("/api/users/:id", userHandlers.getUserById);
 // app.put("/api/users/:id", hashPassword, userHandlers.modifyUser);

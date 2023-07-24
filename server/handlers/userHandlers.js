@@ -17,6 +17,65 @@ const findByToken = "SELECT * FROM users WHERE validation_token = ?";
 const validateByToken =
   "UPDATE users SET is_validated = ? , validation_token = ? WHERE validation_token = ?";
 // const emailHtml = `<h1>Hello world!</h><p>Click below!</p> <p>This is the email verification link : </p>`;
+const changeAdminStatusSQL = "UPDATE users SET is_admin=? WHERE id = ?";
+const selectUserByIdSQL =
+  "SELECT id, first_name, last_name, email, is_admin, avatar, created_at, updated_at FROM users WHERE id = ?";
+// const isAdminSQL = "SELECT is_admin FROM users WHERE id = ?";
+const changeAdminStatus = (req, res) => {
+  const userId = req.params.id;
+  dbConnection
+    .query(selectUserByIdSQL, [userId])
+    .then(([user]) => {
+      console.log(user);
+      if (user[0] != null) {
+        const isAdmin = user[0].is_admin;
+        dbConnection
+          .query(changeAdminStatusSQL, [isAdmin === 0 ? 1 : 0, userId])
+          .then(([result]) => {
+            if (result.affectedRows !== null) {
+              dbConnection
+                .query(selectUserByIdSQL, [userId])
+                .then(([userUpdated]) => {
+                  console.log(userUpdated);
+                  res.status(200).json({
+                    status: 200,
+                    message: "Admin status changed",
+                    user: userUpdated,
+                  });
+                })
+                .catch((err) => {
+                  console.error(err);
+                  res.status(500).json({
+                    status: 404,
+                    error: "Error retrieving data from database",
+                  });
+                });
+            } else {
+              res.status(404).json({ error: "Something went wrong" });
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            res
+              .status(500)
+              .send(`Error retrieving data from database - ${err}`);
+          });
+      } else {
+        res.status(404).json({
+          status: 404,
+          error: "Something went wrong",
+        });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res
+        .status(500)
+        .json({ status: 404, error: "Error retrieving data from database" });
+    });
+
+  //return user with changed status and state it in react to display in dashboard
+};
 const getAllUsers = (req, res) => {
   dbConnection
     .query(getAll)
@@ -156,4 +215,5 @@ module.exports = {
   logout,
   signin,
   validateUserAndRedirect,
+  changeAdminStatus,
 };

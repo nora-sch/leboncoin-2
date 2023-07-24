@@ -3,7 +3,6 @@ const dbConnection = require("./database/connection");
 const jwt = require("jsonwebtoken");
 const isUserByEmail = "SELECT COUNT(*) as count FROM users WHERE email = ?";
 const selectUserById = "SELECT * FROM users WHERE id = ?";
-
 const findByEmailWithPwd =
   "SELECT id, first_name, last_name, email, password, is_admin, is_validated, avatar FROM users where email = ?";
 const hashingOptions = {
